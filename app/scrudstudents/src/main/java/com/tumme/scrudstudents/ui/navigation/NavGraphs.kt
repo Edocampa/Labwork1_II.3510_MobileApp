@@ -1,0 +1,302 @@
+package com.tumme.scrudstudents.ui.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
+import androidx.navigation.navArgument
+
+import com.tumme.scrudstudents.ui.student.StudentListScreen
+import com.tumme.scrudstudents.ui.student.StudentFormScreen
+import com.tumme.scrudstudents.ui.student.StudentDetailScreen
+import com.tumme.scrudstudents.ui.course.CourseListScreen
+import com.tumme.scrudstudents.ui.course.CourseFormScreen
+import com.tumme.scrudstudents.ui.subscribe.SubscribeFormScreen
+import com.tumme.scrudstudents.ui.subscribe.SubscribeListScreen
+
+/**
+ * ROUTES - Central definition of all navigation destinations
+ *
+ *
+ */
+object Routes {
+    /**
+     * STUDENT_LIST - Main screen showing all students in a table
+     *
+     * This is the start destination
+     *
+     */
+    const val STUDENT_LIST = "student_list"
+
+    /**
+     * STUDENT_FORM - Screen for creating a new student
+     *
+     * Create only
+     *
+     * Navigation: Reached via (+) button on STUDENT_LIST
+     */
+    const val STUDENT_FORM = "student_form"
+
+    /**
+     * STUDENT_DETAIL - Screen showing detailed view of one student
+     *
+     * Required parameter: studentId (Int)
+     * Format: "student_detail/{studentId}"
+     *
+     *
+     * Navigation: Reached by clicking "View" button on a student row
+     */
+    const val STUDENT_DETAIL = "student_detail/{studentId}"
+
+    const val COURSE_LIST = "course_list"
+    const val COURSE_FORM = "course_form"
+
+    const val COURSE_EDIT = "course_form/{courseId}"
+
+    const val SUBSCRIBE_LIST = "subscribe_list"
+    const val SUBSCRIBE_FORM = "subscribe_form"
+}
+
+/**
+ * APP NAV HOST - Main navigation component for the entire app
+ *
+ * This is the root navigation composable that manages all screen transitions
+ *
+ * Navigation Architecture:
+ * - NavController: Manages navigation stack and handles back button
+ * - NavHost: Container that displays the current screen
+ * - composable(): Defines each destination and its UI
+ *
+ * How Navigation Works:
+ * 1. User interacts with UI (clicks button, swipes, etc.)
+ * 2. Screen calls navController.navigate("route")
+ * 3. NavController adds route to back stack
+ * 4. NavHost switches to the composable for that route
+ * 5. Old screen is kept in memory (back stack)
+ * 6. User can press back to return to previous screen
+ *
+ */
+@Composable
+fun AppNavHost() {
+    /**
+     * NavController - The navigation state holder
+     *
+     * rememberNavController() creates a NavController that:
+     * - Survives recompositions
+     * - Maintains navigation state (current screen, back stack)
+     * - Provides navigation methods (navigate, popBackStack, etc.)
+     *
+     * This is passed to child screens via callbacks so they can navigate
+     */
+    val navController = rememberNavController()
+
+    /**
+     * NavHost - Container that displays the current destination
+     *
+     * Parameters:
+     * - navController: The controller managing navigation state
+     * - startDestination: Initial route shown on app launch
+     *
+     * The NavHost listens to NavController and displays the appropriate
+     * composable based on the current route in the back stack
+     */
+    NavHost(
+        navController = navController,
+        startDestination = Routes.STUDENT_LIST // App starts with student list
+    ) {
+        /**
+         * DESTINATION 1: Student List Screen
+         *
+         * Route: "student_list"
+         * Parameters: None
+         *
+         * This is the main screen showing all students
+         * Users can navigate from here to:
+         * - STUDENT_FORM (create new student)
+         * - STUDENT_DETAIL (view student details)
+         * - COURSE_LIST (view all courses)
+         * - SUBSCRIBE_LIST(view all subscribes)
+         *
+         * Navigation callbacks:
+         * - onNavigateToForm: Called when (+) button is clicked
+         *   → Navigates to form screen
+         * - onNavigateToDetail: Called when "View" button clicked
+         *   → Navigates to detail screen with student ID
+         *
+         * navController.navigate():
+         * - Adds new destination to back stack
+         * - NavHost switches to that destination
+         * - Previous screen remains in back stack
+         */
+        composable(Routes.STUDENT_LIST) {
+            StudentListScreen(
+                onNavigateToForm = {
+                    navController.navigate(Routes.STUDENT_FORM)
+                },
+                onNavigateToDetail = { id ->
+                    navController.navigate("student_detail/$id")
+                },
+                onNavigateToCourses = { navController.navigate(Routes.COURSE_LIST) },
+                onNavigateToSubscribes = { navController.navigate(Routes.SUBSCRIBE_LIST) }
+            )
+        }
+
+        /**
+         * DESTINATION 2: Student Form Screen
+         *
+         * Route: "student_form"
+         * Parameters: None
+         *
+         * This screen allows creating a new student
+         *
+         * Navigation callback:
+         * - onSaved: Called after successfully saving a student
+         *   → Returns to previous screen (STUDENT_LIST)
+         *
+         * popBackStack():
+         * - Removes current screen from back stack
+         * - Returns to previous screen
+         *
+         * This creates the pattern:
+         * 1. User clicks + button on list
+         * 2. Form screen appears
+         * 3. User fills form and clicks Save
+         * 4. Student saved to database
+         * 5. Form screen closes, back to list
+         * 6. List automatically shows new student
+         */
+        composable(Routes.STUDENT_FORM) {
+            StudentFormScreen(
+                onSaved = {
+                    // Pop current screen, return to list
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        /**
+         * DESTINATION 3: Student Detail Screen
+         *
+         * Route: "student_detail/{studentId}"
+         * Parameters: studentId (required, Int)
+         *
+         * This screen shows detailed information about one student
+         *
+         *
+         * Argument extraction:
+         * - backStackEntry: Contains navigation arguments
+         * - getInt("studentId"): Extracts the integer parameter
+         * - ?: 0: Default value if parsing fails (safety fallback)
+         *
+         * Flow:
+         * 1. User clicks "View" on student with ID x
+         * 2. List screen calls onNavigateToDetail(x)
+         * 3. Navigation builds route "student_detail/x"
+         * 4. NavHost matches this route to this composable
+         * 5. Parameter "x" is extracted as studentId
+         * 6. StudentDetailScreen receives studentId = x
+         * 7. Screen loads and displays that student's data
+         */
+        composable(
+            route = "student_detail/{studentId}",
+            arguments = listOf(
+                navArgument("studentId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            /**
+             * Extract studentId from navigation arguments
+             *
+             * Process:
+             * 1. backStackEntry.arguments: Bundle containing all parameters
+             * 2. getInt("studentId"): Extracts the integer parameter
+             * 3. ?: 0: Null safety - defaults to 0 if extraction fails
+             *
+             * Set 0 like default because:
+             * - Prevents null pointer exceptions
+             * - 0 is often used as "invalid ID" in databases
+             */
+            val id = backStackEntry.arguments?.getInt("studentId") ?: 0
+
+            /**
+             * Display the detail screen with the student ID
+             *
+             * The screen will:
+             * 1. Use the ID to fetch student from database
+             * 2. Display student information
+             * 3. Provide a back button to return to list
+             *
+             * onBack callback:
+             * - Allows user to return to previous screen
+             * - Removes detail screen from back stack
+             */
+            StudentDetailScreen(
+                studentId = id,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        // Course routes
+
+        composable(Routes.COURSE_LIST) {
+            CourseListScreen(
+                onNavigateToForm = {
+                    navController.navigate(Routes.COURSE_FORM)
+                },
+                onNavigateToEdit = { courseId: Int ->
+                    navController.navigate("course_form/$courseId")
+                },
+                onNavigateToStudents = { navController.navigate(Routes.STUDENT_LIST) },
+                onNavigateToSubscribes = { navController.navigate(Routes.SUBSCRIBE_LIST) }
+            )
+        }
+
+        composable(Routes.COURSE_FORM) {
+            CourseFormScreen(
+                courseId = 0,
+                onSaved = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = "course_form/{courseId}",
+            arguments = listOf(
+                navArgument("courseId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+            CourseFormScreen(
+                courseId = courseId,
+                onSaved = { navController.popBackStack() }
+            )
+        }
+
+        composable(Routes.SUBSCRIBE_LIST) {
+            SubscribeListScreen(
+                onNavigateToForm = {
+                    navController.navigate(Routes.SUBSCRIBE_FORM)
+                },
+                onNavigateToStudents = { navController.navigate(Routes.STUDENT_LIST) },
+                onNavigateToCourses = { navController.navigate(Routes.COURSE_LIST) }
+            )
+        }
+
+        /**
+         * DESTINATION: Subscribe Form Screen
+         * Allows enrolling a student in a course with a score
+         */
+        composable(Routes.SUBSCRIBE_FORM) {
+            SubscribeFormScreen(
+                onSaved = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+    }
+}
