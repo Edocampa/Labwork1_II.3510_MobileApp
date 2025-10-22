@@ -68,7 +68,9 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "scrud-db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(false)
+            .build()
 
     /**
      * Provides StudentDao for accessing Student table

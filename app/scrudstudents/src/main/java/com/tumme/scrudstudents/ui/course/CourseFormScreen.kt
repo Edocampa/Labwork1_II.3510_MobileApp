@@ -246,7 +246,8 @@ fun CourseFormScreen(
                         idCourse = id,
                         nameCourse = nameCourse,
                         ectsCourse = ects,
-                        levelCourse = levelCourse
+                        levelCourse = levelCourse,
+                        teacherId = 0
                     )
 
                     // Call ViewModel - validation happens here

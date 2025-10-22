@@ -9,6 +9,8 @@ import com.tumme.scrudstudents.data.local.dao.SubscribeDao
 import com.tumme.scrudstudents.data.local.model.StudentEntity
 import com.tumme.scrudstudents.data.local.model.CourseEntity
 import com.tumme.scrudstudents.data.local.model.SubscribeEntity
+import com.tumme.scrudstudents.data.local.model.TeacherEntity
+import com.tumme.scrudstudents.data.local.model.User
 
 /**
  * APP DATABASE - Room database configuration for the entire application
@@ -95,9 +97,11 @@ import com.tumme.scrudstudents.data.local.model.SubscribeEntity
     entities = [
         StudentEntity::class,
         CourseEntity::class,
-        SubscribeEntity::class
+        SubscribeEntity::class,
+        User:: class,
+        TeacherEntity:: class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false         // false means --> Don't export schema JSON
 )
 @TypeConverters(Converters::class)
