@@ -6,11 +6,13 @@ import androidx.room.TypeConverters
 import com.tumme.scrudstudents.data.local.dao.CourseDao
 import com.tumme.scrudstudents.data.local.dao.StudentDao
 import com.tumme.scrudstudents.data.local.dao.SubscribeDao
+import com.tumme.scrudstudents.data.local.dao.UserDao
 import com.tumme.scrudstudents.data.local.model.StudentEntity
 import com.tumme.scrudstudents.data.local.model.CourseEntity
 import com.tumme.scrudstudents.data.local.model.SubscribeEntity
 import com.tumme.scrudstudents.data.local.model.TeacherEntity
 import com.tumme.scrudstudents.data.local.model.User
+import com.tumme.scrudstudents.data.local.dao.TeacherDao
 
 /**
  * APP DATABASE - Room database configuration for the entire application
@@ -120,4 +122,12 @@ abstract class AppDatabase : RoomDatabase() {
 
      // Provides access to Subscribe table operations
     abstract fun subscribeDao(): SubscribeDao
+
+    // Provides access to User table operations
+
+    abstract fun userDao(): UserDao
+
+    // Provides access to Teacher table operations
+
+    abstract fun teacherDao(): TeacherDao
 }
