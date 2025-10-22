@@ -166,12 +166,15 @@ fun StudentFormScreen(
             val dob = dateFormat.parse(dobText) ?: Date()
 
 
+            val userId = 0
             val student = StudentEntity(
                 idStudent = id,
                 lastName = lastName,
                 firstName = firstName,
                 dateOfBirth = dob,
-                gender = gender
+                gender = gender,
+                userId = 0,
+                level = "B1" // Default at the moment, only for testing
             )
 
 

@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.tumme.scrudstudents.data.local.model.Gender
 import com.tumme.scrudstudents.data.local.model.LevelCourse
 import java.util.Date
+import com.tumme.scrudstudents.data.local.model.UserRole
 
 /**
  * TYPE CONVERTERS - Custom type conversion for Room database
@@ -149,4 +150,14 @@ class Converters {
      */
     @TypeConverter
     fun levelToString(level: LevelCourse?): String? = level?.value
+}
+
+@TypeConverter
+fun fromUserRole(role: UserRole): String{
+    return role.name
+}
+
+@TypeConverter
+fun toUserRole(value:String): UserRole{
+    return UserRole.valueOf(value)
 }
