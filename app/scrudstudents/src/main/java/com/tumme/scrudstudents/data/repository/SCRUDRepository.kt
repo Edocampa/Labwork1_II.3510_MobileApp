@@ -8,6 +8,10 @@ import com.tumme.scrudstudents.data.local.model.StudentEntity
 import com.tumme.scrudstudents.data.local.model.SubscribeEntity
 import kotlinx.coroutines.flow.Flow
 import com.tumme.scrudstudents.data.local.dao.SubscribeWithDetails
+import com.tumme.scrudstudents.data.local.dao.UserDao
+import com.tumme.scrudstudents.data.local.dao.TeacherDao
+import com.tumme.scrudstudents.data.local.model.TeacherEntity
+import com.tumme.scrudstudents.data.local.model.User
 
 /**
  * UNIFIED REPOSITORY - Central data access point for all entities
@@ -27,7 +31,9 @@ import com.tumme.scrudstudents.data.local.dao.SubscribeWithDetails
 class SCRUDRepository(
     private val studentDao: StudentDao,    // Handles Student database operations
     private val courseDao: CourseDao,      // Handles Course database operations
-    private val subscribeDao: SubscribeDao // Handles Subscribe database operations
+    private val subscribeDao: SubscribeDao, // Handles Subscribe database operations
+    private val userDao: UserDao,
+    private val teacherDao: TeacherDao
 ) {
 
     // Students
@@ -187,4 +193,23 @@ class SCRUDRepository(
      */
     fun getSubscribesWithDetails(): Flow<List<SubscribeWithDetails>> =
         subscribeDao.getSubscribesWithDetails()
+
+    // User operations
+
+    suspend fun registerUser(user: User): Long = userDao.InsertUser(user)
+    suspend fun login(email: String, password: String): User? =
+        userDao.login(email,password)
+    suspend fun findUserByEmail(email: String): User? = userDao.findByEmail(email)
+    suspend fun getUserById(userId: Int): User? = userDao.getUserById(userId)
+    fun getAllUsers(): Flow<List<User>> = userDao.getAllUsers()
+
+    // Teacher operations
+
+    suspend fun insertTeacher(teacher: TeacherEntity): Long =
+        teacherDao.insertTeacher(teacher)
+    suspend fun getTeacherByUserId(userId: Int): TeacherEntity? =
+        teacherDao.getTeacherByUserId(userId)
+    suspend fun getTeacherById(teacherId: Int): TeacherEntity? =
+        teacherDao.getTeacherByUserId(teacherId)
+    fun getAllTeachers(): Flow<List<TeacherEntity>> = teacherDao.getAllTeachers()
 }

@@ -13,6 +13,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import dagger.hilt.android.qualifiers.ApplicationContext
+import com.tumme.scrudstudents.data.local.dao.UserDao
+import com.tumme.scrudstudents.data.local.dao.TeacherDao
 
 /**
  * HILT MODULE - Dependency Injection configuration for the entire app
@@ -72,6 +74,18 @@ object AppModule {
             .fallbackToDestructiveMigration(false)
             .build()
 
+    @Provides
+    @Singleton
+    fun provideUserDao(database: AppDatabase): UserDao {
+        return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTeacherDao(database: AppDatabase): TeacherDao {
+        return database.teacherDao()
+    }
+
     /**
      * Provides StudentDao for accessing Student table
      *
@@ -110,12 +124,12 @@ object AppModule {
     fun provideCourseDao(db: AppDatabase): CourseDao = db.courseDao()
 
     /**
-     * Provides SubscribeDao instance
+     * Provides SubscribeDao.kt instance
      *
      * @param db AppDatabase instance (injected by Hilt)
-     * @return SubscribeDao - Interface for Subscribe CRUD operations
+     * @return SubscribeDao.kt - Interface for Subscribe CRUD operations
      *
-     * Extracts SubscribeDao from the database and makes it available
+     * Extracts SubscribeDao.kt from the database and makes it available
      * for dependency injection into SCRUDRepository
      *
      *
@@ -125,12 +139,13 @@ object AppModule {
     @Provides
     fun provideSubscribeDao(db: AppDatabase): SubscribeDao = db.subscribeDao()
 
+
     /**
      * Provides the unified Repository for all entities
      *
      * @param studentDao StudentDao instance (injected by Hilt)
      * @param courseDao CourseDao instance (injected by Hilt)
-     * @param subscribeDao SubscribeDao instance (injected by Hilt)
+     * @param subscribeDao SubscribeDao.kt instance (injected by Hilt)
      * @return SCRUDRepository - Repository for all CRUD operations
      *
      *
@@ -147,8 +162,10 @@ object AppModule {
     fun provideRepository(
         studentDao: StudentDao,
         courseDao: CourseDao,
-        subscribeDao: SubscribeDao
+        subscribeDao: SubscribeDao,
+        userDao: UserDao,
+        teacherDao: TeacherDao
     ): SCRUDRepository =
-        SCRUDRepository(studentDao, courseDao, subscribeDao)
+        SCRUDRepository(studentDao, courseDao, subscribeDao, userDao, teacherDao)
 }
 
