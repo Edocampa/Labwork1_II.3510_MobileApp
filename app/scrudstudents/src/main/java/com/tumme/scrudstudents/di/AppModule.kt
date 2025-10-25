@@ -15,6 +15,7 @@ import javax.inject.Singleton
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.tumme.scrudstudents.data.local.dao.UserDao
 import com.tumme.scrudstudents.data.local.dao.TeacherDao
+import com.tumme.scrudstudents.data.repository.AuthRepository
 
 /**
  * HILT MODULE - Dependency Injection configuration for the entire app
@@ -168,4 +169,24 @@ object AppModule {
     ): SCRUDRepository =
         SCRUDRepository(studentDao, courseDao, subscribeDao, userDao, teacherDao)
 }
+
+    /**
+     * Provides AuthRepository singleton for dependency injection
+     *
+     * AuthRepository is responsible for:
+     * - Managing authentication state
+     * - Login and registration logic
+     * - Delegating DAO operations to SCRUDRepository
+     *
+     * @param scrudRepository Repository for database access
+     * @return Singleton instance of AuthRepository
+     */
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        scrudRepository: SCRUDRepository
+    ): AuthRepository {
+        return AuthRepository(scrudRepository)
+    }
 
