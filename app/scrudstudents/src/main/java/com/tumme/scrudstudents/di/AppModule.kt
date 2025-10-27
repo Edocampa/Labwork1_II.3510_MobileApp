@@ -168,7 +168,7 @@ object AppModule {
         teacherDao: TeacherDao
     ): SCRUDRepository =
         SCRUDRepository(studentDao, courseDao, subscribeDao, userDao, teacherDao)
-}
+
 
     /**
      * Provides AuthRepository singleton for dependency injection
@@ -189,4 +189,7 @@ object AppModule {
     ): AuthRepository {
         return AuthRepository(scrudRepository)
     }
+}
+
+
 

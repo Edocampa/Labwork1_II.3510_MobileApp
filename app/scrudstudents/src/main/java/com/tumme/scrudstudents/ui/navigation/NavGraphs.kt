@@ -12,6 +12,11 @@ import com.tumme.scrudstudents.ui.course.CourseListScreen
 import com.tumme.scrudstudents.ui.course.CourseFormScreen
 import com.tumme.scrudstudents.ui.subscribe.SubscribeFormScreen
 import com.tumme.scrudstudents.ui.subscribe.SubscribeListScreen
+import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.collectAsState
+import com.tumme.scrudstudents.data.local.model.UserRole
+import androidx.compose.runtime.getValue
 
 /**
  * ROUTES - Central definition of all navigation destinations
@@ -54,6 +59,24 @@ object Routes {
 
     const val SUBSCRIBE_LIST = "subscribe_list"
     const val SUBSCRIBE_FORM = "subscribe_form"
+
+    // AUTH ROUTES
+    const val LOGIN = "login"
+    const val REGISTER = "register"
+
+    // STUDENT ROUTES
+    const val STUDENT_HOME = "student_home"
+    const val STUDENT_COURSES = "student_courses"
+    const val STUDENT_SUBSCRIPTIONS = "student_subscriptions"
+    const val STUDENT_GRADES = "student_grades"
+    const val STUDENT_FINAL_GRADE = "student_final_grade"
+
+    // TEACHER ROUTES
+    const val TEACHER_HOME = "teacher_home"
+    const val TEACHER_COURSES = "teacher_courses"
+    const val TEACHER_DECLARE = "teacher_declare_courses"
+    const val TEACHER_ENTER_GRADES = "teacher_enter_grades"
+    const val TEACHER_STUDENTS = "teacher_students"
 }
 
 /**
@@ -76,7 +99,9 @@ object Routes {
  *
  */
 @Composable
-fun AppNavHost() {
+fun AppNavHost(
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
     /**
      * NavController - The navigation state holder
      *
@@ -88,6 +113,17 @@ fun AppNavHost() {
      * This is passed to child screens via callbacks so they can navigate
      */
     val navController = rememberNavController()
+
+    // Observe current user to determine start destination
+    val currentUser by authViewModel.currentUser.collectAsState()
+
+    // Determine start destination based on auth state
+    val startDestination = when {
+        currentUser == null -> Routes.LOGIN
+        currentUser?.role == UserRole.STUDENT -> Routes.STUDENT_HOME
+        currentUser?.role == UserRole.TEACHER -> Routes.TEACHER_HOME
+        else -> Routes.LOGIN
+    }
 
     /**
      * NavHost - Container that displays the current destination
@@ -101,8 +137,156 @@ fun AppNavHost() {
      */
     NavHost(
         navController = navController,
-        startDestination = Routes.STUDENT_LIST // App starts with student list
+        startDestination = startDestination
     ) {
+
+
+        // AUTH SCREENS
+
+        /**
+         * LOGIN SCREEN - Entry point for authentication
+         *
+         * This is the first screen users see when not authenticated
+         *
+         * Callbacks:
+         * - onNavigateToRegister: User clicks "Don't have an account? Register"
+         *   → Navigates to registration screen
+         *
+         * - onLoginSuccess: Called when login succeeds, receives authenticated User
+         *   → Determines destination based on user role (Student or Teacher)
+         *   → Navigates to appropriate home screen
+         *   → Clears back stack (popUpTo with inclusive=true) so user can't
+         *     go back to login screen after logging in
+         */
+        composable(Routes.LOGIN) {
+            LoginScreen(
+                onNavigateToRegister = {
+                    navController.navigate(Routes.REGISTER)
+                },
+                onLoginSuccess = { user ->
+                    // Role-based navigation: different home screens for different users
+                    val destination = when (user.role) {
+                        UserRole.STUDENT -> Routes.STUDENT_HOME
+                        UserRole.TEACHER -> Routes.TEACHER_HOME
+                    }
+                    navController.navigate(destination) {
+                        // popUpTo removes all screens up to LOGIN from back stack
+                        // inclusive = true also removes LOGIN itself
+                        // Result: pressing back won't return to login screen
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        /**
+         * REGISTER SCREEN - Create new user account
+         *
+         * Allows users to create account by choosing role (Student/Teacher),
+         * entering email, password and level (if Student)
+         *
+         * Callbacks:
+         * - onNavigateBack: User clicks back button or "Already have account?"
+         *   → navigateUp() removes current screen, returns to login
+         *
+         * - onRegisterSuccess: Registration successful
+         *   → Returns to login screen so user can login with new credentials
+         *   → navigateUp() is simple back navigation (doesn't clear stack)
+         */
+        composable(Routes.REGISTER) {
+            RegisterScreen(
+                onNavigateBack = {
+                    navController.navigateUp()  // Simple back navigation
+                },
+                onRegisterSuccess = {
+                    navController.navigateUp()  // Return to login after registration
+                }
+            )
+        }
+
+        // STUDENT SCREENS
+
+        /**
+         * STUDENT HOME SCREEN - Main dashboard for student users
+         *
+         * This is the student's landing page after login
+         * Provides navigation to all student features
+         *
+         * Navigation options:
+         * - Courses: Browse and enroll in courses
+         * - Subscriptions: View enrolled courses
+         * - Grades: Check grades for each course
+         * - Final Grade: See weighted average (ECTS-based calculation)
+         *
+         * onLogout:
+         * - Clears authentication state (authViewModel.logout())
+         * - Navigates back to login screen
+         * - popUpTo(0) clears ENTIRE back stack
+         * - Result: user can't press back to return to student area
+         */
+        composable(Routes.STUDENT_HOME) {
+            StudentHomeScreen(
+                onNavigateToCourses = {
+                    navController.navigate(Routes.STUDENT_COURSES)
+                },
+                onNavigateToSubscriptions = {
+                    navController.navigate(Routes.STUDENT_SUBSCRIPTIONS)
+                },
+                onNavigateToGrades = {
+                    navController.navigate(Routes.STUDENT_GRADES)
+                },
+                onNavigateToFinalGrade = {
+                    navController.navigate(Routes.STUDENT_FINAL_GRADE)
+                },
+                onLogout = {
+                    authViewModel.logout()  // Clear user session
+                    navController.navigate(Routes.LOGIN) {
+                        // popUpTo(0) removes ALL screens from back stack
+                        // inclusive = true ensures even the root screen is removed
+                        // Fresh start from login
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // TEACHER SCREENS
+
+        /**
+         * TEACHER HOME SCREEN - Main dashboard for teacher users
+         *
+         * This is the teacher's landing page after login
+         * Provides navigation to all teacher features
+         *
+         * Navigation options:
+         * - Courses: View courses they teach
+         * - Enter Grades: Assign grades to students in their courses
+         * - Students: See list of enrolled students per course
+         *
+         * onLogout: Same logic as student logout
+         * - Clears session and returns to login with empty back stack
+         */
+        composable(Routes.TEACHER_HOME) {
+            TeacherHomeScreen(
+                onNavigateToCourses = {
+                    navController.navigate(Routes.TEACHER_COURSES)
+                },
+                onNavigateToEnterGrades = {
+                    navController.navigate(Routes.TEACHER_ENTER_GRADES)
+                },
+                onNavigateToStudents = {
+                    navController.navigate(Routes.TEACHER_STUDENTS)
+                },
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+
         /**
          * DESTINATION 1: Student List Screen
          *
@@ -299,4 +483,44 @@ fun AppNavHost() {
         }
 
     }
+}
+
+// PLACEHOLDER SCREENS
+// I create these to avoid compilation error before implementing UI
+
+@Composable
+fun LoginScreen(
+    onNavigateToRegister: () -> Unit,
+    onLoginSuccess: (com.tumme.scrudstudents.data.local.model.User) -> Unit
+) {
+    // TODO: Implement LoginScreen UI
+}
+
+@Composable
+fun RegisterScreen(
+    onNavigateBack: () -> Unit,
+    onRegisterSuccess: () -> Unit
+) {
+    // TODO: Implement RegisterScreen UI
+}
+
+@Composable
+fun StudentHomeScreen(
+    onNavigateToCourses: () -> Unit,
+    onNavigateToSubscriptions: () -> Unit,
+    onNavigateToGrades: () -> Unit,
+    onNavigateToFinalGrade: () -> Unit,
+    onLogout: () -> Unit
+) {
+    // TODO: Implement StudentHomeScreen UI
+}
+
+@Composable
+fun TeacherHomeScreen(
+    onNavigateToCourses: () -> Unit,
+    onNavigateToEnterGrades: () -> Unit,
+    onNavigateToStudents: () -> Unit,
+    onLogout: () -> Unit
+) {
+    // TODO: Implement TeacherHomeScreen UI
 }
