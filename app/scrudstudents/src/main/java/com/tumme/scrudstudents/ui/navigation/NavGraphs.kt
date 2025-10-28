@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
-
+import com.tumme.scrudstudents.ui.auth.LoginScreen
 import com.tumme.scrudstudents.ui.student.StudentListScreen
 import com.tumme.scrudstudents.ui.student.StudentFormScreen
 import com.tumme.scrudstudents.ui.student.StudentDetailScreen
@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
 import com.tumme.scrudstudents.data.local.model.UserRole
 import androidx.compose.runtime.getValue
+import com.tumme.scrudstudents.ui.auth.RegisterScreen
 
 /**
  * ROUTES - Central definition of all navigation destinations
@@ -487,22 +488,6 @@ fun AppNavHost(
 
 // PLACEHOLDER SCREENS
 // I create these to avoid compilation error before implementing UI
-
-@Composable
-fun LoginScreen(
-    onNavigateToRegister: () -> Unit,
-    onLoginSuccess: (com.tumme.scrudstudents.data.local.model.User) -> Unit
-) {
-    // TODO: Implement LoginScreen UI
-}
-
-@Composable
-fun RegisterScreen(
-    onNavigateBack: () -> Unit,
-    onRegisterSuccess: () -> Unit
-) {
-    // TODO: Implement RegisterScreen UI
-}
 
 @Composable
 fun StudentHomeScreen(
