@@ -18,6 +18,8 @@ import androidx.compose.runtime.collectAsState
 import com.tumme.scrudstudents.data.local.model.UserRole
 import androidx.compose.runtime.getValue
 import com.tumme.scrudstudents.ui.auth.RegisterScreen
+import com.tumme.scrudstudents.ui.student.StudentHomeScreen
+import com.tumme.scrudstudents.ui.teacher.TeacherHomeScreen
 
 /**
  * ROUTES - Central definition of all navigation destinations
@@ -486,26 +488,3 @@ fun AppNavHost(
     }
 }
 
-// PLACEHOLDER SCREENS
-// I create these to avoid compilation error before implementing UI
-
-@Composable
-fun StudentHomeScreen(
-    onNavigateToCourses: () -> Unit,
-    onNavigateToSubscriptions: () -> Unit,
-    onNavigateToGrades: () -> Unit,
-    onNavigateToFinalGrade: () -> Unit,
-    onLogout: () -> Unit
-) {
-    // TODO: Implement StudentHomeScreen UI
-}
-
-@Composable
-fun TeacherHomeScreen(
-    onNavigateToCourses: () -> Unit,
-    onNavigateToEnterGrades: () -> Unit,
-    onNavigateToStudents: () -> Unit,
-    onLogout: () -> Unit
-) {
-    // TODO: Implement TeacherHomeScreen UI
-}
