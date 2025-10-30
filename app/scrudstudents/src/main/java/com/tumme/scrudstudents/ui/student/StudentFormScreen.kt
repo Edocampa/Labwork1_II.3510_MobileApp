@@ -171,8 +171,8 @@ fun StudentFormScreen(
                 idStudent = id,
                 lastName = lastName,
                 firstName = firstName,
-                dateOfBirth = dob,
-                gender = gender,
+                //dateOfBirth = dob,
+                //gender = gender,
                 userId = 0,
                 level = "B1" // Default at the moment, only for testing
             )

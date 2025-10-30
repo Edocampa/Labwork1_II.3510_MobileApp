@@ -103,7 +103,7 @@ import com.tumme.scrudstudents.data.local.dao.TeacherDao
         User:: class,
         TeacherEntity:: class
     ],
-    version = 2,
+    version = 4,
     exportSchema = false         // false means --> Don't export schema JSON
 )
 @TypeConverters(Converters::class)

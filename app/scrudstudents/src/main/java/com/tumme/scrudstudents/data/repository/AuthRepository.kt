@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.tumme.scrudstudents.data.local.model.StudentEntity
+import com.tumme.scrudstudents.data.local.model.TeacherEntity
 
 /**
  * Auth Repository - Manages authentication state
@@ -29,13 +31,17 @@ class AuthRepository @Inject constructor(
         email: String,
         password: String,
         role: UserRole,
-        level: String? = null
-    ): Result<Long> {
+        level: String?
+    ): Result<Unit> {
         return try {
-            // Check if email already exists
-            val existing = scrudRepository.findUserByEmail(email)
-            if (existing != null) {
-                return Result.failure(Exception("Email already registered"))
+            // Check if email exists
+            if (scrudRepository.getUserByEmail(email) != null) {
+                return Result.failure(Exception("Email already exists"))
+            }
+
+            // Validate student level
+            if (role == UserRole.STUDENT && level.isNullOrBlank()) {
+                return Result.failure(Exception("Level required for students"))
             }
 
             // Create user
@@ -43,11 +49,30 @@ class AuthRepository @Inject constructor(
                 email = email,
                 password = password,
                 role = role,
-                level = if (role == UserRole.STUDENT) level else null
+                level = level
             )
+            val userId = scrudRepository.registerUser(user).toInt()
 
-            val userId = scrudRepository.registerUser(user)
-            Result.success(userId)
+            if (role == UserRole.STUDENT && level != null) {
+                val student = StudentEntity(
+                    userId = userId,
+                    firstName = email.substringBefore("@"),
+                    lastName = "",
+                    level = level
+                )
+                scrudRepository.insertStudent(student)
+            }
+
+            if (role == UserRole.TEACHER) {
+                val teacher = TeacherEntity(
+                    userId = userId,
+                    firstName = email.substringBefore("@"),  // Temporary name
+                    lastName = ""
+                )
+                scrudRepository.insertTeacher(teacher)
+            }
+
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

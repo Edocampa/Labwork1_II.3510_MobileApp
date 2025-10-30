@@ -79,4 +79,11 @@ interface StudentDao {
      */
     @Query("SELECT * FROM students WHERE idStudent = :id LIMIT 1")
     suspend fun getStudentById(id: Int): StudentEntity?
+
+    /**
+     * Get student by user ID
+     * Used to find the student profile associated with a logged-in user
+     */
+    @Query("SELECT * FROM students WHERE userId = :userId LIMIT 1")
+    suspend fun getStudentByUserId(userId: Int): StudentEntity?
 }

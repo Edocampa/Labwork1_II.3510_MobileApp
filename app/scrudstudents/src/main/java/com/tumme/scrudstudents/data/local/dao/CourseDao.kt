@@ -3,6 +3,7 @@ package com.tumme.scrudstudents.data.local.dao
 import androidx.room.*
 import com.tumme.scrudstudents.data.local.model.CourseEntity
 import kotlinx.coroutines.flow.Flow
+import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
 
 @Dao
 interface CourseDao {
@@ -59,4 +60,26 @@ interface CourseDao {
 
     @Query("SELECT * FROM courses WHERE idCourse = :id LIMIT 1")
     suspend fun getCourseById(id: Int): CourseEntity?
+
+    /**
+     * Get courses filtered by level with teacher info
+     */
+    @Transaction
+    @Query("SELECT * FROM courses WHERE levelCourse = :level ORDER BY nameCourse ASC")
+    suspend fun getCoursesByLevelWithTeachers(level: String): List<CourseWithTeacher>
+
+    /**
+     * Get all courses with their teacher information
+     */
+    @Transaction
+    @Query("SELECT * FROM courses ORDER BY nameCourse ASC")
+    suspend fun getCoursesWithTeachers(): List<CourseWithTeacher>
+
+    /**
+     * Get course with teacher by ID
+     */
+    @Transaction
+    @Query("SELECT * FROM courses WHERE idCourse = :courseId")
+    suspend fun getCourseWithTeacher(courseId: Int): CourseWithTeacher?
 }
+

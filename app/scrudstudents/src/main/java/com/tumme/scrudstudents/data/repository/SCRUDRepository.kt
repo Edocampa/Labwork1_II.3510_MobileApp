@@ -12,6 +12,7 @@ import com.tumme.scrudstudents.data.local.dao.UserDao
 import com.tumme.scrudstudents.data.local.dao.TeacherDao
 import com.tumme.scrudstudents.data.local.model.TeacherEntity
 import com.tumme.scrudstudents.data.local.model.User
+import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
 
 /**
  * UNIFIED REPOSITORY - Central data access point for all entities
@@ -142,8 +143,9 @@ class SCRUDRepository(
      *
      * Returns courses the student is enrolled in with their scores
      */
-    fun getSubscribesByStudent(sId: Int): Flow<List<SubscribeEntity>> =
-        subscribeDao.getSubscribesByStudent(sId)
+    fun getSubscribesByStudent(studentId: Int): Flow<List<SubscribeEntity>> {
+        return subscribeDao.getSubscribesByStudent(studentId)
+    }
 
     /**
      * Get all subscribes for a specific course
@@ -196,11 +198,12 @@ class SCRUDRepository(
 
     // User operations
 
-    suspend fun registerUser(user: User): Long = userDao.InsertUser(user)
+    suspend fun registerUser(user: User): Long = userDao.insertUser(user)
     suspend fun login(email: String, password: String): User? =
         userDao.login(email,password)
     suspend fun findUserByEmail(email: String): User? = userDao.findByEmail(email)
     suspend fun getUserById(userId: Int): User? = userDao.getUserById(userId)
+    suspend fun getUserByEmail(email: String): User? = userDao.getUserByEmail(email)
     fun getAllUsers(): Flow<List<User>> = userDao.getAllUsers()
 
     // Teacher operations
@@ -212,4 +215,50 @@ class SCRUDRepository(
     suspend fun getTeacherById(teacherId: Int): TeacherEntity? =
         teacherDao.getTeacherByUserId(teacherId)
     fun getAllTeachers(): Flow<List<TeacherEntity>> = teacherDao.getAllTeachers()
+
+    suspend fun getCoursesByLevel(level: String): List<CourseWithTeacher> {
+        return courseDao.getCoursesByLevelWithTeachers(level)
+    }
+
+    // COURSE WITH TEACHER METHODS
+
+    suspend fun getCoursesWithTeachers(): List<CourseWithTeacher> {
+        return courseDao.getCoursesWithTeachers()
+    }
+
+    suspend fun getCourseWithTeacher(courseId: Int): CourseWithTeacher? {
+        return courseDao.getCourseWithTeacher(courseId)
+    }
+
+// SUBSCRIBE METHODS FOR STUDENT
+
+    /**
+     * Check if student is already enrolled in a course
+     */
+    suspend fun isStudentEnrolled(studentId: Int, courseId: Int): Boolean {
+        return subscribeDao.getSubscribeByStudentAndCourse(studentId, courseId) != null
+    }
+
+    /**
+     * Enroll student in course with initial score 0
+     */
+    suspend fun enrollStudent(studentId: Int, courseId: Int) {
+        val subscribe = SubscribeEntity(
+            studentId = studentId,
+            courseId = courseId,
+            score = 0f
+        )
+        subscribeDao.insert(subscribe)
+    }
+
+    /**
+     * Get student by user ID
+     */
+    suspend fun getStudentByUserId(userId: Int): StudentEntity? {
+        return studentDao.getStudentByUserId(userId)
+    }
+
+
+
+
 }

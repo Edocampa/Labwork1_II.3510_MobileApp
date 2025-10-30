@@ -14,7 +14,7 @@ interface UserDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun InsertUser(user: User): Long
+    suspend fun insertUser(user: User): Long
 
     /**
      * Find user by email (for login check)
@@ -39,6 +39,9 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE idUser = :userId")
     suspend fun getUserById(userId: Int): User?
+
+    @Query("SELECT * FROM users WHERE email = :email")
+    suspend fun getUserByEmail(email: String): User?
 
     /**
      * Get all users

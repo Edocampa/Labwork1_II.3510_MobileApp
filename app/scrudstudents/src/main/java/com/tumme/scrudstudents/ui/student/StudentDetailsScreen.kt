@@ -37,8 +37,8 @@ fun StudentDetailScreen(
             } else {
                 Text("ID: ${student!!.idStudent}")
                 Text("Name: ${student!!.firstName} ${student!!.lastName}")
-                Text("DOB: ${sdf.format(student!!.dateOfBirth)}")
-                Text("Gender: ${student!!.gender.value}")
+                //Text("DOB: ${sdf.format(student!!.dateOfBirth)}")
+                //Text("Gender: ${student!!.gender.value}")
             }
         }
     }
