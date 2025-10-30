@@ -21,7 +21,9 @@ import com.tumme.scrudstudents.ui.auth.RegisterScreen
 import com.tumme.scrudstudents.ui.student.StudentHomeScreen
 import com.tumme.scrudstudents.ui.teacher.TeacherHomeScreen
 import com.tumme.scrudstudents.ui.student.StudentCoursesScreen
-
+import com.tumme.scrudstudents.ui.student.StudentSubscriptionsScreen
+import com.tumme.scrudstudents.ui.student.StudentGradesScreen
+import com.tumme.scrudstudents.ui.student.StudentFinalGradeScreen
 /**
  * ROUTES - Central definition of all navigation destinations
  *
@@ -205,6 +207,24 @@ fun AppNavHost(
                 onRegisterSuccess = {
                     navController.navigateUp()  // Return to login after registration
                 }
+            )
+        }
+
+        composable(Routes.STUDENT_SUBSCRIPTIONS) {
+            StudentSubscriptionsScreen(
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(Routes.STUDENT_GRADES) {
+            StudentGradesScreen(
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(Routes.STUDENT_FINAL_GRADE) {
+            StudentFinalGradeScreen(
+                onBack = { navController.navigateUp() }
             )
         }
 
