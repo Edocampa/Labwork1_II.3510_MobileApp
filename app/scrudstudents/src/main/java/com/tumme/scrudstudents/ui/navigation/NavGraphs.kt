@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import com.tumme.scrudstudents.ui.auth.RegisterScreen
 import com.tumme.scrudstudents.ui.student.StudentHomeScreen
 import com.tumme.scrudstudents.ui.teacher.TeacherHomeScreen
+import com.tumme.scrudstudents.ui.student.StudentCoursesScreen
 
 /**
  * ROUTES - Central definition of all navigation destinations
@@ -249,6 +250,16 @@ fun AppNavHost(
                         // Fresh start from login
                         popUpTo(0) { inclusive = true }
                     }
+                }
+            )
+        }
+
+        // STUDENT COURSES SCREEN - Browse and enroll in courses
+
+        composable(Routes.STUDENT_COURSES) {
+            StudentCoursesScreen(
+                onBack = {
+                    navController.navigateUp()
                 }
             )
         }

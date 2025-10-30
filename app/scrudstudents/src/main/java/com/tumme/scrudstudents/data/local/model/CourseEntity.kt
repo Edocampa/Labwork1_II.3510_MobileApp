@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.Index
+import androidx.room.ColumnInfo
 
 
 // This is the entity that represents Course table in DB
@@ -26,10 +27,12 @@ import androidx.room.Index
 data class CourseEntity(
 
     // All the fields that are contained in the Course table
-
-    @PrimaryKey val idCourse: Int,  // Primary key that is unique for each course
+    @PrimaryKey(autoGenerate = true)
+    val idCourse: Int = 0,
     val nameCourse: String,
     val ectsCourse: Float,
+
+    @ColumnInfo(name = "teacherId")
     val teacherId: Int,
     val levelCourse: String
 )

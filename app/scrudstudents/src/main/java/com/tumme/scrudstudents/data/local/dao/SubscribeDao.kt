@@ -45,6 +45,12 @@ interface SubscribeDao {
     @Query("SELECT * FROM subscribes WHERE courseId = :cId")
     fun getSubscribesByCourse(cId: Int): Flow<List<SubscribeEntity>>
 
+    /**
+     * Get subscribe by student ID and course ID
+     */
+    @Query("SELECT * FROM subscribes WHERE studentId = :studentId AND courseId = :courseId LIMIT 1")
+    suspend fun getSubscribeByStudentAndCourse(studentId: Int, courseId: Int): SubscribeEntity?
+
 
 /**
  * Challenge: Gets subscriptions with student and course details (no IDs)

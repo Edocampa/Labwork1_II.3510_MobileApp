@@ -2,9 +2,7 @@ package com.tumme.scrudstudents.data.local.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 import androidx.room.Index
-import androidx.room.ColumnInfo
 
 
 // This is the entity that represents subscribes, the relationship between student and courses

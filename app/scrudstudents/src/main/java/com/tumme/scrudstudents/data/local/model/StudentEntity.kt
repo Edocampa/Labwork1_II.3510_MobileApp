@@ -34,11 +34,16 @@ data class StudentEntity(
 
     // These variables represent all the fields that a student has
 
-    @PrimaryKey val idStudent: Int, // Primary key -> unique identifier for each student
+    @PrimaryKey(autoGenerate = true)
+    val idStudent: Int = 0, // Primary key -> unique identifier for each student
+
     val userId : Int,
     val lastName: String,
     val firstName: String,
-    val dateOfBirth: Date,
-    val gender: Gender,
+
+    // I've commented these at the moment because useless
+
+    //val dateOfBirth: Date,
+    //val gender: Gender,
     val level: String
 )
