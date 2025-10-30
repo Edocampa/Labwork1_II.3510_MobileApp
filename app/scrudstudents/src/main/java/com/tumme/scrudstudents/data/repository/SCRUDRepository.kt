@@ -13,6 +13,7 @@ import com.tumme.scrudstudents.data.local.dao.TeacherDao
 import com.tumme.scrudstudents.data.local.model.TeacherEntity
 import com.tumme.scrudstudents.data.local.model.User
 import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
+import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 
 /**
  * UNIFIED REPOSITORY - Central data access point for all entities
@@ -256,6 +257,13 @@ class SCRUDRepository(
      */
     suspend fun getStudentByUserId(userId: Int): StudentEntity? {
         return studentDao.getStudentByUserId(userId)
+    }
+
+    /**
+     * Get student subscriptions with full course and teacher details
+     */
+    suspend fun getStudentSubscriptionsWithDetails(studentId: Int): List<SubscribeWithCourseAndTeacher> {
+        return subscribeDao.getSubscriptionsWithDetails(studentId)
     }
 
 

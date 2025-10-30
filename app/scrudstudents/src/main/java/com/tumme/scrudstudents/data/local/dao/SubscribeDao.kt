@@ -3,6 +3,7 @@ package com.tumme.scrudstudents.data.local.dao
 import androidx.room.*
 import com.tumme.scrudstudents.data.local.model.SubscribeEntity
 import kotlinx.coroutines.flow.Flow
+import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 
 @Dao
 interface SubscribeDao {
@@ -50,6 +51,18 @@ interface SubscribeDao {
      */
     @Query("SELECT * FROM subscribes WHERE studentId = :studentId AND courseId = :courseId LIMIT 1")
     suspend fun getSubscribeByStudentAndCourse(studentId: Int, courseId: Int): SubscribeEntity?
+
+    /**
+     * Get all subscriptions for a student with course and teacher info
+     */
+    @Transaction
+    @Query("""
+    SELECT s.* 
+    FROM subscribes s
+    WHERE s.studentId = :studentId
+    ORDER BY s.courseId ASC
+""")
+    suspend fun getSubscriptionsWithDetails(studentId: Int): List<SubscribeWithCourseAndTeacher>
 
 
 /**
