@@ -81,5 +81,23 @@ interface CourseDao {
     @Transaction
     @Query("SELECT * FROM courses WHERE idCourse = :courseId")
     suspend fun getCourseWithTeacher(courseId: Int): CourseWithTeacher?
+
+    /**
+     * Get courses by teacher ID
+     */
+    @Query("SELECT * FROM courses WHERE teacherId = :teacherId ORDER BY nameCourse ASC")
+    suspend fun getCoursesByTeacher(teacherId: Int): List<CourseEntity>
+
+    /**
+     * Update course
+     */
+    @Update
+    suspend fun update(course: CourseEntity)
+
+    /**
+     * Delete course by ID
+     */
+    @Query("DELETE FROM courses WHERE idCourse = :courseId")
+    suspend fun deleteById(courseId: Int)
 }
 

@@ -24,6 +24,10 @@ import com.tumme.scrudstudents.ui.student.StudentCoursesScreen
 import com.tumme.scrudstudents.ui.student.StudentSubscriptionsScreen
 import com.tumme.scrudstudents.ui.student.StudentGradesScreen
 import com.tumme.scrudstudents.ui.student.StudentFinalGradeScreen
+import com.tumme.scrudstudents.ui.teacher.TeacherCourseFormScreen
+import com.tumme.scrudstudents.ui.teacher.TeacherCoursesScreen
+import com.tumme.scrudstudents.ui.teacher.TeacherEnterGradesScreen
+import com.tumme.scrudstudents.ui.teacher.TeacherStudentsScreen
 /**
  * ROUTES - Central definition of all navigation destinations
  *
@@ -83,6 +87,9 @@ object Routes {
     const val TEACHER_DECLARE = "teacher_declare_courses"
     const val TEACHER_ENTER_GRADES = "teacher_enter_grades"
     const val TEACHER_STUDENTS = "teacher_students"
+
+    const val TEACHER_COURSE_FORM = "teacher_course_form"
+    const val TEACHER_COURSE_EDIT = "teacher_course_edit/{courseId}"
 }
 
 /**
@@ -317,6 +324,52 @@ fun AppNavHost(
                         popUpTo(0) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        composable(Routes.TEACHER_COURSES) {
+            TeacherCoursesScreen(
+                onBack = { navController.navigateUp() },
+                onAddCourse = {
+                    navController.navigate(Routes.TEACHER_COURSE_FORM)
+                },
+                onEditCourse = { courseId ->
+                    navController.navigate("teacher_course_edit/$courseId")
+                }
+            )
+        }
+
+        composable(Routes.TEACHER_COURSE_FORM) {
+            TeacherCourseFormScreen(
+                courseId = 0,
+                onBack = { navController.navigateUp() },
+                onSaved = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = "teacher_course_edit/{courseId}",
+            arguments = listOf(
+                navArgument("courseId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+            TeacherCourseFormScreen(
+                courseId = courseId,
+                onBack = { navController.navigateUp() },
+                onSaved = { navController.navigateUp() }
+            )
+        }
+
+        composable(Routes.TEACHER_ENTER_GRADES) {
+            TeacherEnterGradesScreen(
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(Routes.TEACHER_STUDENTS) {
+            TeacherStudentsScreen(
+                onBack = { navController.navigateUp() }
             )
         }
 

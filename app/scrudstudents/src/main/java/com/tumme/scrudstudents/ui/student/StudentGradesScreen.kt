@@ -116,9 +116,9 @@ private fun GradeCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = when {
-                score >= 27 -> MaterialTheme.colorScheme.primaryContainer
-                score >= 24 -> MaterialTheme.colorScheme.secondaryContainer
-                score >= 18 -> MaterialTheme.colorScheme.tertiaryContainer
+                score >= 18 -> MaterialTheme.colorScheme.primaryContainer
+                score >= 16 -> MaterialTheme.colorScheme.secondaryContainer
+                score >= 10 -> MaterialTheme.colorScheme.tertiaryContainer
                 else -> MaterialTheme.colorScheme.errorContainer
             }
         )
@@ -190,14 +190,14 @@ private fun GradeCard(
                         style = MaterialTheme.typography.displayMedium,
                         fontWeight = FontWeight.Bold,
                         color = when {
-                            score >= 27 -> MaterialTheme.colorScheme.primary
-                            score >= 24 -> MaterialTheme.colorScheme.secondary
-                            score >= 18 -> MaterialTheme.colorScheme.tertiary
+                            score >= 18 -> MaterialTheme.colorScheme.primary
+                            score >= 16 -> MaterialTheme.colorScheme.secondary
+                            score >= 10 -> MaterialTheme.colorScheme.tertiary
                             else -> MaterialTheme.colorScheme.error
                         }
                     )
                     Text(
-                        text = "/30",
+                        text = "/20",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

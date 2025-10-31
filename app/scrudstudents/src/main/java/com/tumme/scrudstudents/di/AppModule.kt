@@ -75,27 +75,6 @@ object AppModule {
             "scrud-db"
         )
             .fallbackToDestructiveMigration(true)
-            .addCallback(object : RoomDatabase.Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
-                    db.execSQL("""
-            INSERT INTO teachers (idTeacher, userId, firstName, lastName) VALUES
-            (1, 0, 'John', 'Smith'),
-            (2, 0, 'Maria', 'Garcia'),
-            (3, 0, 'Robert', 'Johnson')
-        """)
-
-                    db.execSQL("""
-            INSERT INTO courses (idCourse, nameCourse, ectsCourse, teacherId, levelCourse) VALUES
-            (1, 'English Beginner Grammar', 6.0, 1, 'B1'),
-            (2, 'English Intermediate Conversation', 9.0, 1, 'B2'),
-            (3, 'English Advanced Literature', 12.0, 1, 'B3'),
-            (4, 'Spanish Beginner', 6.0, 2, 'B1'),
-            (5, 'Spanish Intermediate', 9.0, 2, 'B2'),
-            (6, 'French Advanced', 12.0, 3, 'A2')
-        """)
-                }
-            })
             .build()
 
     @Provides

@@ -9,9 +9,7 @@ import androidx.room.Index
 @Entity(
     tableName = "teachers",
 
-    // Only for the moment disabled (for testing)
 
-    /*
     foreignKeys = [
         ForeignKey(
             entity = User::class,
@@ -19,7 +17,7 @@ import androidx.room.Index
             childColumns = ["userId"],
             onDelete = ForeignKey.CASCADE
         )
-    ],*/
+    ],
     indices = [
         Index(value = ["userId"])
     ]
