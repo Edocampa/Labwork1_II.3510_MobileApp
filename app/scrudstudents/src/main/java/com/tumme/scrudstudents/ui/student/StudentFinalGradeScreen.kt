@@ -158,9 +158,9 @@ private fun FinalGradeCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = when {
-                finalGrade >= 27 -> MaterialTheme.colorScheme.primaryContainer
-                finalGrade >= 24 -> MaterialTheme.colorScheme.secondaryContainer
-                finalGrade >= 18 -> MaterialTheme.colorScheme.tertiaryContainer
+                finalGrade >= 18 -> MaterialTheme.colorScheme.primaryContainer
+                finalGrade >= 16 -> MaterialTheme.colorScheme.secondaryContainer
+                finalGrade >= 10 -> MaterialTheme.colorScheme.tertiaryContainer
                 else -> MaterialTheme.colorScheme.errorContainer
             }
         )
@@ -176,9 +176,9 @@ private fun FinalGradeCard(
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
                 tint = when {
-                    finalGrade >= 27 -> MaterialTheme.colorScheme.primary
-                    finalGrade >= 24 -> MaterialTheme.colorScheme.secondary
-                    finalGrade >= 18 -> MaterialTheme.colorScheme.tertiary
+                    finalGrade >= 18 -> MaterialTheme.colorScheme.primary
+                    finalGrade >= 16 -> MaterialTheme.colorScheme.secondary
+                    finalGrade >= 10 -> MaterialTheme.colorScheme.tertiary
                     else -> MaterialTheme.colorScheme.error
                 }
             )
@@ -200,15 +200,15 @@ private fun FinalGradeCard(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.scale(scale),
                 color = when {
-                    finalGrade >= 27 -> MaterialTheme.colorScheme.primary
-                    finalGrade >= 24 -> MaterialTheme.colorScheme.secondary
-                    finalGrade >= 18 -> MaterialTheme.colorScheme.tertiary
+                    finalGrade >= 18 -> MaterialTheme.colorScheme.primary
+                    finalGrade >= 16 -> MaterialTheme.colorScheme.secondary
+                    finalGrade >= 10 -> MaterialTheme.colorScheme.tertiary
                     else -> MaterialTheme.colorScheme.error
                 }
             )
 
             Text(
-                text = "/30",
+                text = "/20",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -246,10 +246,11 @@ private fun FinalGradeCard(
                 label = {
                     Text(
                         text = when {
-                            finalGrade >= 28 -> "Excellent! 🌟"
-                            finalGrade >= 26 -> "Very Good! 👏"
-                            finalGrade >= 24 -> "Good! 👍"
-                            finalGrade >= 20 -> "Fair 📚"
+                            finalGrade >= 18 -> "Excellent! 🌟"
+                            finalGrade >= 16 -> "Very Good! 👏"
+                            finalGrade >= 14 -> "Good! 👍"
+                            finalGrade >= 12 -> "Fair 📚"
+                            finalGrade >= 10 -> "Passing 💪"
                             else -> "Keep Going! 💪"
                         },
                         fontWeight = FontWeight.Bold

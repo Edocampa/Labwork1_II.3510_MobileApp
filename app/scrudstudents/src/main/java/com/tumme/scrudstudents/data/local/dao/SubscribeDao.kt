@@ -86,20 +86,66 @@ interface SubscribeDao {
  * @return Flow<List<SubscribeWithDetails>>: Subscriptions with full details
  */
 
+@Query("""
+    SELECT 
+        s.studentId as subscribeId,
+        s.studentId,
+        s.courseId,
+        s.score,
+        st.idStudent,
+        st.firstName AS studentFirstName,
+        st.lastName AS studentLastName,
+        st.level AS studentLevel,
+        u.email AS studentEmail,
+        c.nameCourse AS courseName
+    FROM subscribes s
+    INNER JOIN students st ON s.studentId = st.idStudent
+    INNER JOIN users u ON st.userId = u.idUser
+    INNER JOIN courses c ON s.courseId = c.idCourse
+    ORDER BY st.lastName, st.firstName, c.nameCourse
+""")
+fun getSubscribesWithDetails(): Flow<List<SubscribeWithDetails>>
+
+
+    /**
+     * Get students enrolled in a course with their grades
+     * Returns raw data that will be mapped to StudentWithGrade
+     */
     @Query("""
-            SELECT 
-                s.studentId,
-                s.courseId,
-                s.score,
-                st.firstName AS studentFirstName,
-                st.lastName AS studentLastName,
-                c.nameCourse AS courseName
-            FROM subscribes s
-            INNER JOIN students st ON s.studentId = st.idStudent
-            INNER JOIN courses c ON s.courseId = c.idCourse
-            ORDER BY st.lastName, st.firstName, c.nameCourse
-        """)
-    fun getSubscribesWithDetails(): Flow<List<SubscribeWithDetails>>
+    SELECT 
+        s.studentId as subscribeId,
+        st.idStudent as studentId,
+        st.firstName as studentFirstName,
+        st.lastName as studentLastName,
+        u.email as studentEmail,  
+        st.level as studentLevel,
+        s.score as currentScore
+    FROM subscribes s
+    INNER JOIN students st ON s.studentId = st.idStudent
+    INNER JOIN users u ON st.userId = u.idUser  
+    WHERE s.courseId = :courseId
+    ORDER BY st.lastName ASC, st.firstName ASC
+""")
+    suspend fun getStudentsInCourseWithGrades(courseId: Int): List<StudentWithGradeRaw>
+
+    /**
+     * Update grade for a subscription
+     */
+    @Query("UPDATE subscribes SET score = :score WHERE studentId = :subscribeId")
+    suspend fun updateGrade(subscribeId: Int, score: Float)
+
+    /**
+     * Raw data class for query result
+     */
+    data class StudentWithGradeRaw(
+        val subscribeId: Int,
+        val studentId: Int,
+        val studentFirstName: String,
+        val studentLastName: String,
+        val studentEmail: String,
+        val studentLevel: String,
+        val currentScore: Float
+    )
 }
 
 /**
@@ -118,10 +164,16 @@ interface SubscribeDao {
  * @property courseName Course name (from JOIN)
  */
 data class SubscribeWithDetails(
+    val subscribeId: Int,
     val studentId: Int,
     val courseId: Int,
     val score: Float,
     val studentFirstName: String,
     val studentLastName: String,
+    val studentLevel: String,
+    val studentEmail: String,
     val courseName: String
 )
+
+
+

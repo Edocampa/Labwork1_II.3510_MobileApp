@@ -199,15 +199,15 @@ private fun SubscriptionCard(
                     // Grade assigned
                     Surface(
                         color = when {
-                            score >= 27 -> MaterialTheme.colorScheme.primaryContainer
-                            score >= 24 -> MaterialTheme.colorScheme.secondaryContainer
-                            score >= 18 -> MaterialTheme.colorScheme.tertiaryContainer
+                            score >= 18 -> MaterialTheme.colorScheme.primaryContainer
+                            score >= 16 -> MaterialTheme.colorScheme.secondaryContainer
+                            score >= 10 -> MaterialTheme.colorScheme.tertiaryContainer
                             else -> MaterialTheme.colorScheme.errorContainer
                         },
                         shape = MaterialTheme.shapes.medium
                     ) {
                         Text(
-                            text = "${score.toInt()}/30",
+                            text = "${score.toInt()}/20",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)

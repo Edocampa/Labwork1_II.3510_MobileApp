@@ -14,6 +14,7 @@ import com.tumme.scrudstudents.data.local.model.TeacherEntity
 import com.tumme.scrudstudents.data.local.model.User
 import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
 import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
+import com.tumme.scrudstudents.data.local.model.StudentWithGrade
 
 /**
  * UNIFIED REPOSITORY - Central data access point for all entities
@@ -264,6 +265,52 @@ class SCRUDRepository(
      */
     suspend fun getStudentSubscriptionsWithDetails(studentId: Int): List<SubscribeWithCourseAndTeacher> {
         return subscribeDao.getSubscriptionsWithDetails(studentId)
+    }
+
+    /**
+     * Get courses taught by a teacher
+     */
+    suspend fun getCoursesByTeacher(teacherId: Int): List<CourseEntity> {
+        return courseDao.getCoursesByTeacher(teacherId)
+    }
+
+    /**
+     * Update existing course
+     */
+    suspend fun updateCourse(course: CourseEntity) {
+        courseDao.update(course)
+    }
+
+    /**
+     * Delete course
+     */
+    suspend fun deleteCourse(courseId: Int) {
+        courseDao.deleteById(courseId)
+    }
+
+    /**
+     * Get students enrolled in a course with their grades
+     */
+    suspend fun getStudentsInCourseWithGrades(courseId: Int): List<StudentWithGrade> {
+        val rawData = subscribeDao.getStudentsInCourseWithGrades(courseId)
+        return rawData.map { raw ->
+            StudentWithGrade(
+                subscribeId = raw.subscribeId,
+                studentId = raw.studentId,
+                studentFirstName = raw.studentFirstName,
+                studentLastName = raw.studentLastName,
+                studentEmail = raw.studentEmail,
+                studentLevel = raw.studentLevel,
+                currentScore = raw.currentScore
+            )
+        }
+    }
+
+    /**
+     * Update student grade
+     */
+    suspend fun updateStudentGrade(subscribeId: Int, score: Float) {
+        subscribeDao.updateGrade(subscribeId, score)
     }
 
 
