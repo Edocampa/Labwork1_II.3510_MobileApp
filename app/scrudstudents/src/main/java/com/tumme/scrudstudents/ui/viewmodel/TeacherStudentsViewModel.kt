@@ -68,6 +68,14 @@ class TeacherStudentsViewModel @Inject constructor(
         }
     }
 
+    fun clearSelection() {
+        _selectedCourse.value = null
+        _students.value = emptyList()
+        _totalStudents.value = 0
+        _gradedStudents.value = 0
+        _averageGrade.value = 0f
+    }
+
     fun selectCourse(course: CourseEntity) = viewModelScope.launch {
         _selectedCourse.value = course
         _isLoading.value = true

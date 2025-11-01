@@ -246,6 +246,7 @@ class SCRUDRepository(
      */
     suspend fun enrollStudent(studentId: Int, courseId: Int) {
         val subscribe = SubscribeEntity(
+            id = 0,
             studentId = studentId,
             courseId = courseId,
             score = 0f

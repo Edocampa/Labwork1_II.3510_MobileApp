@@ -49,7 +49,14 @@ fun TeacherEnterGradesScreen(
                     Text(selectedCourse?.nameCourse ?: "Enter Grades")
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = {
+                        if (selectedCourse != null) {
+                            viewModel.clearSelection()
+                        } else {
+                            onBack()
+                        }
+                    }
+                    ) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }

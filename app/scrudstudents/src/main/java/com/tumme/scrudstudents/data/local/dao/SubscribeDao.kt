@@ -113,7 +113,7 @@ fun getSubscribesWithDetails(): Flow<List<SubscribeWithDetails>>
      */
     @Query("""
     SELECT 
-        s.studentId as subscribeId,
+        s.id as subscribeId,
         st.idStudent as studentId,
         st.firstName as studentFirstName,
         st.lastName as studentLastName,

@@ -51,7 +51,13 @@ fun TeacherStudentsScreen(
                     Text(selectedCourse?.nameCourse ?: "My Students")
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = {
+                        if (selectedCourse != null) {
+                            viewModel.clearSelection()
+                        } else {
+                            onBack()
+                        }
+                    }) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }
