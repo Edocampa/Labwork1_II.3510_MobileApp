@@ -70,6 +70,11 @@ class TeacherEnterGradesViewModel @Inject constructor(
         }
     }
 
+    fun clearSelection() {
+        _selectedCourse.value = null
+        _students.value = emptyList()
+    }
+
     fun updateGrade(subscribeId: Int, score: Float) = viewModelScope.launch {
         if (score < 0 || score > 20) {
             _message.value = "Grade must be between 0 and 20"

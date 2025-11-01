@@ -79,33 +79,23 @@ class StudentCoursesViewModel @Inject constructor(
     }
 
     fun enrollInCourse(courseId: Int) = viewModelScope.launch {
-        val currentUser = authRepository.currentUser.value
-        if (currentUser == null) {
-            _message.value = "User not logged in"
-            return@launch
-        }
-
         _isLoading.value = true
         try {
-            val student = repository.getStudentByUserId(currentUser.idUser)
-            if (student == null) {
-                _message.value = "Student profile not found"
-                return@launch
+            val currentUser = authRepository.currentUser.value
+            if (currentUser != null) {
+                val student = repository.getStudentByUserId(currentUser.idUser)
+                if (student != null) {
+                    // Check if already enrolled
+                    val isAlreadyEnrolled = repository.isStudentEnrolled(student.idStudent, courseId)
+                    if (isAlreadyEnrolled) {
+                        _message.value = "Already enrolled in this course"
+                    } else {
+                        // Create new subscription
+                        repository.enrollStudent(student.idStudent, courseId)
+                        _message.value = "Enrolled successfully!"
+                    }
+                }
             }
-
-            // Check if already enrolled
-            if (repository.isStudentEnrolled(student.idStudent, courseId)) {
-                _message.value = "Already enrolled in this course"
-                return@launch
-            }
-
-            // Enroll student
-            repository.enrollStudent(student.idStudent, courseId)
-
-            // Reload enrolled courses
-            loadEnrolledCourses()
-
-            _message.value = "Successfully enrolled in course!"
         } catch (e: Exception) {
             _message.value = "Error enrolling: ${e.message}"
         } finally {
