@@ -16,8 +16,25 @@ import com.tumme.scrudstudents.data.local.model.CourseEntity
 import com.tumme.scrudstudents.ui.viewmodel.TeacherCoursesViewModel
 
 /**
- * Teacher Courses Screen - Manage courses taught by teacher
- */
+* TeacherCoursesScreen - Manage courses taught by teacher
+*
+* Displays list of courses taught by the logged-in teacher
+* Allows creating, editing and deleting courses
+*
+* Features:
+* - List of teacher's courses
+* - FAB to add new course
+* - Edit/Delete buttons per course
+* - Delete confirmation dialog
+* - Auto-refresh on screen resume
+* - Empty state with "add course" prompt
+*
+* @param onBack Callback to navigate back to home
+* @param onAddCourse Callback to navigate to course form (new course)
+* @param onEditCourse Callback to navigate to course form (edit mode)
+* @param viewModel ViewModel managing courses list
+*/
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeacherCoursesScreen(
@@ -120,6 +137,24 @@ fun TeacherCoursesScreen(
     }
 }
 
+/**
+ * TeacherCourseCard - Individual course card with actions
+ *
+ * Displays course information and provides edit/delete actions
+ * Shows confirmation dialog before deletion
+ *
+ * Layout:
+ * - Course name (title)
+ * - ECTS with star icon
+ * - Level with school icon
+ * - Divider
+ * - Action buttons (Edit, Delete)
+ *
+ * @param course Course entity to display
+ * @param onEdit Callback to edit this course
+ * @param onDelete Callback to delete this course
+ */
+
 @Composable
 private fun TeacherCourseCard(
     course: CourseEntity,
@@ -157,7 +192,7 @@ private fun TeacherCourseCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${course.ectsCourse.toInt()} CFU",
+                            text = "${course.ectsCourse.toInt()} ECTS",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

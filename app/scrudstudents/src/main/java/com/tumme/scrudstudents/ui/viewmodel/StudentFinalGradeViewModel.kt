@@ -15,7 +15,7 @@ import javax.inject.Inject
 /**
  * StudentFinalGradeViewModel - Calculates weighted average grade
  *
- * Formula: Final Grade = Σ(grade × CFU) / Σ(CFU)
+ * Formula: Final Grade = Σ(grade × ECTS) / Σ(ECTS)
  * Only includes courses with grades (score > 0)
  */
 @HiltViewModel
@@ -30,8 +30,8 @@ class StudentFinalGradeViewModel @Inject constructor(
     private val _finalGrade = MutableStateFlow(0f)
     val finalGrade: StateFlow<Float> = _finalGrade.asStateFlow()
 
-    private val _totalCFU = MutableStateFlow(0)
-    val totalCFU: StateFlow<Int> = _totalCFU.asStateFlow()
+    private val _totalECTS = MutableStateFlow(0)
+    val totalECTS: StateFlow<Int> = _totalECTS.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -61,14 +61,14 @@ class StudentFinalGradeViewModel @Inject constructor(
                         val totalWeightedScore = graded.sumOf {
                             (it.subscribe.score * it.courseWithTeacher.course.ectsCourse).toDouble()
                         }
-                        val totalCfu = graded.sumOf {
+                        val totalECTS = graded.sumOf {
                             it.courseWithTeacher.course.ectsCourse.toDouble()
                         }
 
-                        _totalCFU.value = totalCfu.toInt()
-                        _finalGrade.value = (totalWeightedScore / totalCfu).toFloat()
+                        _totalECTS.value = totalECTS.toInt()
+                        _finalGrade.value = (totalWeightedScore / totalECTS).toFloat()
                     } else {
-                        _totalCFU.value = 0
+                        _totalECTS.value = 0
                         _finalGrade.value = 0f
                     }
                 }

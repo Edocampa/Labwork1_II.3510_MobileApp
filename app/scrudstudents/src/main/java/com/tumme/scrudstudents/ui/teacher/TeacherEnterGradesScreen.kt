@@ -19,7 +19,22 @@ import com.tumme.scrudstudents.data.local.model.StudentWithGrade
 import com.tumme.scrudstudents.ui.viewmodel.TeacherEnterGradesViewModel
 
 /**
- * Teacher Enter Grades Screen - Assign grades to students
+ * TeacherEnterGradesScreen - Assign grades to students
+ *
+ * Two-step flow for entering student grades:
+ * 1. Select course from list of taught courses
+ * 2. View students enrolled in that course and enter/update grades
+ *
+ * Features:
+ * - Course selection screen
+ * - Student list with grade input fields
+ * - Real-time validation (0-20)
+ * - Individual save button per student
+ * - Current grade display with color coding
+ * - Two-level back navigation (students → courses → home)
+ *
+ * @param onBack Callback to navigate back (or to previous step)
+ * @param viewModel ViewModel managing course selection and grade updates
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,6 +105,15 @@ fun TeacherEnterGradesScreen(
     }
 }
 
+/**
+ * CourseSelectionView - Select course
+ *
+ * Displays list of courses taught by teacher
+ * Clicking a course navigates to student list
+ *
+ * States: Loading, empty, course list
+ */
+
 @Composable
 private fun CourseSelectionView(
     courses: List<CourseEntity>,
@@ -154,6 +178,13 @@ private fun CourseSelectionView(
     }
 }
 
+/**
+ * CourseSelectionCard - Clickable course card
+ *
+ * Shows course name, ECTS, level with arrow indicator
+ * Clicking navigates to student list for that course
+ */
+
 @Composable
 private fun CourseSelectionCard(
     course: CourseEntity,
@@ -178,7 +209,7 @@ private fun CourseSelectionCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${course.ectsCourse.toInt()} CFU • Level ${course.levelCourse}",
+                    text = "${course.ectsCourse.toInt()} ECTS • Level ${course.levelCourse}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -192,6 +223,15 @@ private fun CourseSelectionCard(
         }
     }
 }
+
+/**
+ * StudentGradesListView - Enter grades
+ *
+ * Displays students enrolled in selected course
+ * Each student has grade input field and save button
+ *
+ * States: Loading, empty (no students), student list
+ */
 
 @Composable
 private fun StudentGradesListView(
@@ -247,6 +287,26 @@ private fun StudentGradesListView(
         }
     }
 }
+
+/**
+ * StudentGradeCard - Individual student grade entry
+ *
+ * Card showing student info and grade input
+ *
+ * Features:
+ * - Student name, email, level
+ * - Grade input field (0-20 validation)
+ * - Save button (enabled when grade changes)
+ * - Current grade display (color-coded badge)
+ *
+ * State management:
+ * - gradeText: Local state for input field
+ * - isEditing: Tracks if grade was modified
+ * - Remember by currentScore: Resets when grade updates
+ *
+ * @param student Student info with current grade
+ * @param onUpdateGrade Callback to save grade (subscribeId, score)
+ */
 
 @Composable
 private fun StudentGradeCard(

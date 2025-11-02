@@ -25,8 +25,8 @@ import kotlinx.coroutines.flow.collectLatest
 /**
  * Login Screen - User authentication
  *
- * Allows users to login with email and password.
- * Shows loading state, error messages, and link to register.
+ * Allows users to login with email and password
+ * Shows loading state, error messages and link to register
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +35,7 @@ fun LoginScreen(
     onLoginSuccess: (User) -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    // STATE
+    // State
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -44,7 +44,7 @@ fun LoginScreen(
 
     val isLoading by viewModel.isLoading.collectAsState()
 
-    // EVENT HANDLING
+    // Event Handling
 
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
@@ -78,7 +78,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center
         ) {
 
-            // HEADER
+            // Header
 
             Text(
                 text = "Welcome!",
@@ -96,7 +96,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // EMAIL INPUT
+            // Email Input
 
             OutlinedTextField(
                 value = email,
@@ -122,7 +122,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // PASSWORD INPUT
+            // Password Input
 
             OutlinedTextField(
                 value = password,
@@ -166,7 +166,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ERROR MESSAGE
+            // Error Message
 
             if (errorMessage != null) {
                 Text(
@@ -182,7 +182,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // LOGIN BUTTON
+            // Login Button
 
             Button(
                 onClick = {
@@ -208,7 +208,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // REGISTER LINK
+            // Register Link
 
             Row(
                 horizontalArrangement = Arrangement.Center,

@@ -15,12 +15,29 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
 
 /**
- * Teacher Home Screen - Main dashboard for teacher users
+ * TeacherHomeScreen - Main dashboard for teacher users
  *
- * Provides navigation to all teacher features:
- * - View courses they teach
- * - Enter grades for students
- * - View enrolled students per course
+ * Landing page after teacher login
+ * Provides navigation to all teacher features through menu cards
+ *
+ * Features:
+ * - Welcome header with user email
+ * - Three navigation menu cards:
+ *   1. My Courses (view/manage courses)
+ *   2. Enter Grades (assign grades) - highlighted
+ *   3. My Students (view enrollments)
+ * - Logout button
+ *
+ * Design:
+ * - Scrollable layout for smaller screens
+ * - Card-based navigation
+ * - Visual hierarchy (highlighted primary action)
+ *
+ * @param onNavigateToCourses Navigate to courses management
+ * @param onNavigateToEnterGrades Navigate to grade entry
+ * @param onNavigateToStudents Navigate to student overview
+ * @param onLogout Logout and return to login screen
+ * @param viewModel Auth ViewModel for current user info
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +75,7 @@ fun TeacherHomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // HEADER
+            // Header
 
             Card(
                 modifier = Modifier
@@ -97,7 +114,7 @@ fun TeacherHomeScreen(
                 }
             }
 
-            // MENU CARDS
+            // Menu cards
 
             Text(
                 text = "Your Tools",
@@ -139,7 +156,7 @@ fun TeacherHomeScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // LOGOUT BUTTON
+            // Logout Button
 
             OutlinedButton(
                 onClick = onLogout,
@@ -158,7 +175,21 @@ fun TeacherHomeScreen(
 }
 
 /**
- * Menu Card - Reusable card component for navigation options
+ * MenuCard - Reusable navigation card component
+ *
+ * Displays a feature with icon, title, description and arrow
+ * Can be highlighted for visual emphasis on primary actions
+ *
+ * Layout:
+ * - Left: Icon in colored surface
+ * - Center: Title and description
+ * - Right: Arrow indicator
+ *
+ * @param title Feature name
+ * @param description Brief feature description
+ * @param icon Feature icon
+ * @param onClick Navigation callback
+ * @param highlighted If true, uses tertiary color for emphasis
  */
 @Composable
 private fun MenuCard(

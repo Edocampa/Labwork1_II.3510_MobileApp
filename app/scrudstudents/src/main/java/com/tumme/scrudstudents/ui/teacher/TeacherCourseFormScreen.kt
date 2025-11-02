@@ -23,7 +23,22 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Teacher Course Form Screen - Add/Edit course
+ * TeacherCourseFormScreen - Create or edit a course
+ *
+ * Form for declaring new courses or editing existing ones
+ * Used in two modes: creation (courseId=0) or edit (courseId>0)
+ *
+ * Features:
+ * - Course name input
+ * - ECTS (credits) input with numeric validation
+ * - Level dropdown (P1-PhD)
+ * - Validation (name required, ECTS > 0)
+ * - Save button with loading state
+ *
+ * @param courseId Course ID (0 for new course, >0 for editing)
+ * @param onBack Callback to navigate back
+ * @param onSaved Callback after successful save (triggers navigation back)
+ * @param viewModel ViewModel managing form state and save operation
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +49,7 @@ fun TeacherCourseFormScreen(
     viewModel: TeacherCourseFormViewModel = hiltViewModel()
 ) {
     var courseName by remember { mutableStateOf("") }
-    var cfu by remember { mutableStateOf("") }
+    var ects by remember { mutableStateOf("") }
     var level by remember { mutableStateOf("B1") }
     var showLevelMenu by remember { mutableStateOf(false) }
 
@@ -53,7 +68,7 @@ fun TeacherCourseFormScreen(
     LaunchedEffect(viewModel.course.collectAsState().value) {
         viewModel.course.value?.let { course ->
             courseName = course.nameCourse
-            cfu = course.ectsCourse.toInt().toString()
+            ects = course.ectsCourse.toInt().toString()
             level = course.levelCourse
         }
     }
@@ -103,11 +118,11 @@ fun TeacherCourseFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // CFU
+            // ECTS
             OutlinedTextField(
-                value = cfu,
-                onValueChange = { if (it.all { char -> char.isDigit() }) cfu = it },
-                label = { Text("CFU (Credits)") },
+                value = ects,
+                onValueChange = { if (it.all { char -> char.isDigit() }) ects = it },
+                label = { Text("ECTS (Credits)") },
                 placeholder = { Text("6, 9, or 12") },
                 leadingIcon = {
                     Icon(Icons.Default.Star, null)
@@ -163,14 +178,14 @@ fun TeacherCourseFormScreen(
                     viewModel.saveCourse(
                         courseId = courseId,
                         name = courseName,
-                        cfu = cfu.toIntOrNull() ?: 0,
+                        ects = ects.toIntOrNull() ?: 0,
                         level = level
                     )
                 },
                 enabled = !isLoading &&
                         courseName.isNotBlank() &&
-                        cfu.isNotBlank() &&
-                        (cfu.toIntOrNull() ?: 0) > 0,
+                        ects.isNotBlank() &&
+                        (ects.toIntOrNull() ?: 0) > 0,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
@@ -190,6 +205,21 @@ fun TeacherCourseFormScreen(
     }
 }
 
+/**
+ * TeacherCourseFormViewModel - Manages course form state
+ *
+ * Handles loading existing course data for editing and saving (create/update)
+ *
+ * Responsibilities:
+ * - Load course by ID when editing
+ * - Validate input (name required, ECTS > 0)
+ * - Create new course or update existing
+ * - Link course to current logged-in teacher
+ *
+ * @param repository Database operations
+ * @param authRepository Current user/teacher information
+ */
+
 @HiltViewModel
 class TeacherCourseFormViewModel @Inject constructor(
     private val repository: SCRUDRepository,
@@ -205,6 +235,12 @@ class TeacherCourseFormViewModel @Inject constructor(
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message.asStateFlow()
 
+    /**
+     * Load existing course data for editing
+     *
+     * @param courseId ID of course to load
+     */
+
     fun loadCourse(courseId: Int) = viewModelScope.launch {
         try {
             _course.value = repository.getCourseById(courseId)
@@ -213,13 +249,28 @@ class TeacherCourseFormViewModel @Inject constructor(
         }
     }
 
-    fun saveCourse(courseId: Int, name: String, cfu: Int, level: String) = viewModelScope.launch {
+    /**
+     * Save course (create new or update existing)
+     *
+     * Validation:
+     * - Name must not be blank
+     * - ECTS must be > 0
+     *
+     * Links course to current teacher's ID
+     *
+     * @param courseId 0 for new course, >0 for updating
+     * @param name Course name
+     * @param ects Credit hours (ECTS)
+     * @param level Academic level (P1-PhD)
+     */
+
+    fun saveCourse(courseId: Int, name: String, ects: Int, level: String) = viewModelScope.launch {
         if (name.isBlank()) {
             _message.value = "Course name is required"
             return@launch
         }
-        if (cfu <= 0) {
-            _message.value = "CFU must be greater than 0"
+        if (ects <= 0) {
+            _message.value = "ECTS must be greater than 0"
             return@launch
         }
 
@@ -232,7 +283,7 @@ class TeacherCourseFormViewModel @Inject constructor(
                     val course = CourseEntity(
                         idCourse = courseId,
                         nameCourse = name,
-                        ectsCourse = cfu.toFloat(),
+                        ectsCourse = ects.toFloat(),
                         teacherId = teacher.idTeacher,
                         levelCourse = level
                     )

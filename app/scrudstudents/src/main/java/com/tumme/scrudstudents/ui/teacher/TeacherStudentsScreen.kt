@@ -17,8 +17,27 @@ import com.tumme.scrudstudents.data.local.model.StudentWithGrade
 import com.tumme.scrudstudents.ui.viewmodel.TeacherStudentsViewModel
 
 /**
- * Teacher Students Screen - View enrolled students per course
+ * TeacherStudentsScreen - View enrolled students per course
+ *
+ * Two-step flow for viewing student information:
+ * 1. Select course from list of taught courses
+ * 2. View students with statistics and grade information
+ *
+ * Features:
+ * - Course selection screen
+ * - Statistics cards (total, graded, average)
+ * - Student list with grades
+ * - Color-coded grade display
+ * - Two-level back navigation (students → courses → home)
+ *
+ * Difference from EnterGrades:
+ * - Students: Read-only view with stats (focus on overview)
+ * - EnterGrades: Grade input with save buttons (focus on action)
+ *
+ * @param onBack Callback to navigate back (or to previous step)
+ * @param viewModel ViewModel managing course selection and statistics
  */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeacherStudentsScreen(
@@ -103,6 +122,13 @@ fun TeacherStudentsScreen(
     }
 }
 
+/**
+ * CourseSelectionView - Select course
+ *
+ * Identical to EnterGradesScreen course selection
+ * Shows list of courses taught by teacher
+ */
+
 @Composable
 private fun CourseSelectionView(
     courses: List<CourseEntity>,
@@ -167,6 +193,12 @@ private fun CourseSelectionView(
     }
 }
 
+/**
+ * CourseCard - Clickable course card for selection
+ *
+ * Shows course name, ECTS, level with arrow indicator
+ */
+
 @Composable
 private fun CourseCard(
     course: CourseEntity,
@@ -191,7 +223,7 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${course.ectsCourse.toInt()} CFU • Level ${course.levelCourse}",
+                    text = "${course.ectsCourse.toInt()} ECTS • Level ${course.levelCourse}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -205,6 +237,19 @@ private fun CourseCard(
         }
     }
 }
+
+/**
+ * StatsSection - Statistics cards for selected course
+ *
+ * Displays three metrics in a row:
+ * - Total enrolled students
+ * - Number of graded students
+ * - Average grade (color-coded by performance)
+ *
+ * @param totalStudents Total number of enrolled students
+ * @param gradedStudents Number with grades assigned (score > 0)
+ * @param averageGrade Average grade of graded students (0-20)
+ */
 
 @Composable
 private fun StatsSection(
@@ -260,6 +305,18 @@ private fun StatsSection(
     }
 }
 
+/**
+ * StatCard - Individual statistic card
+ *
+ * Displays an icon, value and label in a compact card
+ * Value color can be customized
+ *
+ * @param icon Icon to display
+ * @param label Label text (e.g., "Students")
+ * @param value Value to display (e.g., "24")
+ * @param color Color for icon and value (default: primary)
+ */
+
 @Composable
 private fun StatCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -299,6 +356,15 @@ private fun StatCard(
         }
     }
 }
+
+/**
+ * StudentsList - List of enrolled students
+ *
+ * Displays student cards with basic info and grades
+ * Read-only view (no grade input)
+ *
+ * States: Loading, empty, student list
+ */
 
 @Composable
 private fun StudentsList(
@@ -350,6 +416,19 @@ private fun StudentsList(
         }
     }
 }
+
+/**
+ * StudentInfoCard - Read-only student information card
+ *
+ * Displays student details and grade status without input fields
+ * Shows grade badge if assigned, or "Not graded" chip if pending
+ *
+ * Layout:
+ * - Left: Student info (name, email, level)
+ * - Right: Grade badge or pending chip
+ *
+ * @param student Student information with current grade
+ */
 
 @Composable
 private fun StudentInfoCard(

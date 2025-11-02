@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.collectLatest
  * Register Screen - Create new user account
  *
  * Allows users to register by choosing role (Student/Teacher),
- * entering email, password, and level (if Student).
+ * entering email, password and level (if Student)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +32,7 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    // STATE
+    // State
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -48,9 +48,9 @@ fun RegisterScreen(
     val isLoading by viewModel.isLoading.collectAsState()
 
     // Available levels for students
-    val levels = listOf("A1", "A2", "B1", "B2", "C1", "C2")
+    val levels = listOf("P1", "P2", "P3", "B1", "B2", "B3", "A1", "A2", "A3", "MS", "PhD")
 
-    // EVENT HANDLING
+    // Event handling
 
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
@@ -92,7 +92,7 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Center
         ) {
 
-            // ========== HEADER ==========
+            // Header
 
             Text(
                 text = "Create Account",
@@ -110,7 +110,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ROLE SELECTOR
+            // Role Selector
 
             ExposedDropdownMenuBox(
                 expanded = showRoleMenu,
@@ -170,7 +170,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // LEVEL SELECTOR (Only for Students)
+            // Level Selector (Only for Students)
 
             if (selectedRole == UserRole.STUDENT) {
                 ExposedDropdownMenuBox(
@@ -217,7 +217,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // EMAIL INPUT
+            // Email Input
 
             OutlinedTextField(
                 value = email,
@@ -243,7 +243,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // PASSWORD INPUT
+            // Password Input
 
             OutlinedTextField(
                 value = password,
@@ -287,7 +287,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // CONFIRM PASSWORD INPUT
+            // Confirm Password Input
 
             OutlinedTextField(
                 value = confirmPassword,
@@ -331,7 +331,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ERROR MESSAGE
+            // Error Message
 
             if (errorMessage != null) {
                 Text(
@@ -347,7 +347,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // REGISTER BUTTON
+            // Register Button
 
             Button(
                 onClick = {
@@ -388,7 +388,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // LOGIN LINK
+            // Login Link
 
             Row(
                 horizontalArrangement = Arrangement.Center,

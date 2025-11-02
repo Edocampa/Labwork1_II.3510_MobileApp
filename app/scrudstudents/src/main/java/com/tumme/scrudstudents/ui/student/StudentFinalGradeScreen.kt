@@ -19,9 +19,20 @@ import com.tumme.scrudstudents.ui.viewmodel.StudentFinalGradeViewModel
 import kotlin.math.roundToInt
 
 /**
- * Student Final Grade Screen - Display weighted average grade
+ * StudentFinalGradeScreen - Display ECTS-weighted final grade
  *
- * Shows ECTS-weighted final grade calculation with breakdown
+ * Shows student's final weighted average calculated using ECTS credits
+ * Formula: Final Grade = Σ(grade × ECTCS) / Σ(ECTS)
+ *
+ * Features:
+ * - Animated final grade display with color coding
+ * - Performance badge (Excellent, Good, etc.)
+ * - Per-course breakdown showing grade and ECTS
+ * - Only includes graded courses (score > 0)
+ * - Empty state for students with no grades
+ *
+ * @param onBack Callback to navigate back
+ * @param viewModel ViewModel managing grade calculation
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,9 +40,10 @@ fun StudentFinalGradeScreen(
     onBack: () -> Unit,
     viewModel: StudentFinalGradeViewModel = hiltViewModel()
 ) {
+    // State observations from ViewModel
     val gradedCourses by viewModel.gradedCourses.collectAsState()
     val finalGrade by viewModel.finalGrade.collectAsState()
-    val totalCFU by viewModel.totalCFU.collectAsState()
+    val totalECTS by viewModel.totalECTS.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val message by viewModel.message.collectAsState()
 
@@ -109,7 +121,7 @@ fun StudentFinalGradeScreen(
                 item {
                     FinalGradeCard(
                         finalGrade = finalGrade,
-                        totalCFU = totalCFU
+                        totalECTS = totalECTS
                     )
                 }
 
@@ -132,10 +144,24 @@ fun StudentFinalGradeScreen(
         }
     }
 
+/**
+ * FinalGradeCard - Large animated card showing final weighted grade
+ *
+ * Features:
+ * - Pulse animation on grade number
+ * - Color-coded background by performance level
+ * - Trophy icon
+ * - Performance badge (Excellent, Good, etc.)
+ * - Total ECTS count
+ *
+ * @param finalGrade Calculated weighted average (0-20)
+ * @param totalECTS Total credits from all graded courses
+ */
+
 @Composable
 private fun FinalGradeCard(
     finalGrade: Float,
-    totalCFU: Int
+    totalECTS: Int
 ) {
     // Pulse animation for grade
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -153,6 +179,9 @@ private fun FinalGradeCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = when {
+
+                // Color-coded by grade level (0-20)
+
                 finalGrade >= 18 -> MaterialTheme.colorScheme.primaryContainer
                 finalGrade >= 16 -> MaterialTheme.colorScheme.secondaryContainer
                 finalGrade >= 10 -> MaterialTheme.colorScheme.tertiaryContainer
@@ -214,7 +243,7 @@ private fun FinalGradeCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Total CFU
+            // Total ECTS
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -227,7 +256,7 @@ private fun FinalGradeCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Total: $totalCFU CFU",
+                    text = "Total: $totalECTS ECTS",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -256,6 +285,14 @@ private fun FinalGradeCard(
     }
 }
 
+/**
+ * CourseBreakdownCard - Individual course grade display
+ *
+ * Shows course name, teacher, grade and ECTS for one course
+ *
+ * @param subscription Course enrollment with grade information
+ */
+
 @Composable
 private fun CourseBreakdownCard(
     subscription: SubscribeWithCourseAndTeacher
@@ -263,7 +300,7 @@ private fun CourseBreakdownCard(
     val course = subscription.courseWithTeacher.course
     val teacher = subscription.courseWithTeacher.teacher
     val score = subscription.subscribe.score
-    val cfu = course.ectsCourse.toInt()
+    val ects = course.ectsCourse.toInt()
     val weightedScore = score * course.ectsCourse
 
     Card(
@@ -309,13 +346,13 @@ private fun CourseBreakdownCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Calculation
+            // Showing number of ECTS
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "$cfu CFU",
+                    text = "$ects ECTS",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
