@@ -222,17 +222,14 @@ class SCRUDRepository(
         return courseDao.getCoursesByLevelWithTeachers(level)
     }
 
-    // COURSE WITH TEACHER METHODS
+    // Course with teacher methods
 
     suspend fun getCoursesWithTeachers(): List<CourseWithTeacher> {
         return courseDao.getCoursesWithTeachers()
     }
 
-    suspend fun getCourseWithTeacher(courseId: Int): CourseWithTeacher? {
-        return courseDao.getCourseWithTeacher(courseId)
-    }
 
-// SUBSCRIBE METHODS FOR STUDENT
+    // Subscribe methods for student
 
     /**
      * Check if student is already enrolled in a course
@@ -313,8 +310,6 @@ class SCRUDRepository(
     suspend fun updateStudentGrade(subscribeId: Int, score: Float) {
         subscribeDao.updateGrade(subscribeId, score)
     }
-
-
 
 
 }

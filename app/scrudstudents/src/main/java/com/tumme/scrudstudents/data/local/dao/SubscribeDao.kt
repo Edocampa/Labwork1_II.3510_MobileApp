@@ -81,6 +81,7 @@ interface SubscribeDao {
  * SQL JOIN:
  * - INNER JOIN students: Gets student data for each subscription
  * - INNER JOIN courses: Gets course data for each subscription
+ * - INNER JOIN users: Gets users data for each subscription
  * - ON conditions: Match IDs between tables
  *
  * @return Flow<List<SubscribeWithDetails>>: Subscriptions with full details
@@ -135,7 +136,7 @@ fun getSubscribesWithDetails(): Flow<List<SubscribeWithDetails>>
     suspend fun updateGrade(subscribeId: Int, score: Float)
 
     /**
-     * Raw data class for query result
+     * Data class for query result
      */
     data class StudentWithGradeRaw(
         val subscribeId: Int,

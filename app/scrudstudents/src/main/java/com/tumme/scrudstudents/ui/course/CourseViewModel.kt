@@ -159,7 +159,6 @@ class CourseViewModel @Inject constructor(
         val validLevels = listOf("P1", "P2", "P3", "B1", "B2", "B3",
             "A1", "A2", "A3", "MS", "PhD")
 
-        // Uncomment to add level validation:
         if (course.levelCourse !in validLevels) {
             _events.emit("Error: Invalid level")
             return@launch

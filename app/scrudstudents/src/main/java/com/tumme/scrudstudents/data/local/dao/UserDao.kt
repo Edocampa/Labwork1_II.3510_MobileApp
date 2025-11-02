@@ -9,7 +9,7 @@ interface UserDao {
 
     /**
      * Register new user
-     * If email already exists, replace (REPLACE strategy)
+     * If email already exists --> replace
      */
 
 
@@ -39,6 +39,10 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE idUser = :userId")
     suspend fun getUserById(userId: Int): User?
+
+    /**
+     * Get user by email
+     */
 
     @Query("SELECT * FROM users WHERE email = :email")
     suspend fun getUserByEmail(email: String): User?

@@ -16,7 +16,18 @@ import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentCoursesViewModel
 
 /**
- * Student Courses Screen - Browse and enroll in courses
+ * StudentCoursesScreen - Browse and enroll in courses
+ *
+ * Displays courses filtered by student's level with enrollment functionality
+ *
+ * Features:
+ * - Level-based filtering (only shows matching courses)
+ * - Teacher name and course details
+ * - One-click enrollment
+ * - Empty state for no available courses
+ *
+ * @param onBack Callback to navigate back to home
+ * @param viewModel ViewModel managing course data and enrollment logic
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,6 +35,7 @@ fun StudentCoursesScreen(
     onBack: () -> Unit,
     viewModel: StudentCoursesViewModel = hiltViewModel()
 ) {
+    // State observations from ViewModel
     val courses by viewModel.courses.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val message by viewModel.message.collectAsState()
@@ -32,6 +44,7 @@ fun StudentCoursesScreen(
     // Show snackbar for messages
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // Show message in snackbar when it changes
     LaunchedEffect(message) {
         message?.let {
             snackbarHostState.showSnackbar(it)
@@ -103,6 +116,17 @@ fun StudentCoursesScreen(
     }
 }
 
+/**
+ * CourseCard - Individual course item with enrollment button
+ *
+ * Displays course information and allows enrollment if not already enrolled
+ *
+ * @param courseWithTeacher Course data with teacher information
+ * @param isEnrolled Whether student is already enrolled
+ * @param onEnroll Callback to enroll in course
+ * @param isLoading Whether enrollment operation is in progress
+ */
+
 @Composable
 private fun CourseCard(
     courseWithTeacher: CourseWithTeacher,
@@ -145,7 +169,7 @@ private fun CourseCard(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // CFU info
+            // ECTS info
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -157,7 +181,7 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${courseWithTeacher.course.ectsCourse} CFU",
+                    text = "${courseWithTeacher.course.ectsCourse} ECTS",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

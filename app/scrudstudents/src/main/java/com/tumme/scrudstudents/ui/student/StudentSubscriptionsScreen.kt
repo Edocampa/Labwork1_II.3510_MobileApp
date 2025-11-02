@@ -17,8 +17,23 @@ import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentSubscriptionsViewModel
 
 /**
- * Student Subscriptions Screen - View enrolled courses with grades
+ * StudentSubscriptionsScreen - View enrolled courses with grades
+ *
+ * Displays all courses the student is enrolled in
+ * Shows current grade if assigned, or "Not graded yet"
+ *
+ * Features:
+ * - Complete enrollment list (graded and ungraded)
+ * - Course details (name, teacher, ECTS, level)
+ * - Grade status (assigned or pending)
+ * - Color-coded grade badges
+ * - Empty state for no enrollments
+ *
+ *
+ * @param onBack Callback to navigate back
+ * @param viewModel ViewModel managing subscription data
  */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentSubscriptionsScreen(
@@ -102,6 +117,23 @@ fun StudentSubscriptionsScreen(
     }
 }
 
+/**
+ * SubscriptionCard - Individual enrollment display with grade status
+ *
+ * Shows complete course information and grade status
+ * Displays grade if assigned, or "Not graded yet" chip if pending
+ *
+ * Card sections:
+ * 1. Course name (title)
+ * 2. Teacher name (with person icon)
+ * 3. ECTS
+ * 4. Level
+ * 5. Divider
+ * 6. Grade status
+ *
+ * @param subscription Course enrollment with grade information
+ */
+
 @Composable
 private fun SubscriptionCard(
     subscription: SubscribeWithCourseAndTeacher
@@ -143,7 +175,7 @@ private fun SubscriptionCard(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // CFU
+            // ECTS
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Star,
@@ -153,7 +185,7 @@ private fun SubscriptionCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${course.ectsCourse.toInt()} CFU",
+                    text = "${course.ectsCourse.toInt()} ECTS",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

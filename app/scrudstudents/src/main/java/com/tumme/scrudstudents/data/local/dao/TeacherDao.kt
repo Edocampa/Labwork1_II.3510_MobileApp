@@ -49,8 +49,4 @@ interface TeacherDao {
     @Query("SELECT * FROM teachers")
     fun getAllTeachers(): Flow<List<TeacherEntity>>
 
-
-
-
-
 }

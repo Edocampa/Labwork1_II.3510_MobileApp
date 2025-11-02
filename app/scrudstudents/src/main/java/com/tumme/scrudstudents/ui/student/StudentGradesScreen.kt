@@ -16,10 +16,22 @@ import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentGradesViewModel
 
 /**
- * Student Grades Screen - View grades for enrolled courses
+ * StudentGradesScreen - View grades for enrolled courses
  *
- * Shows only courses where grades have been assigned
+ * Displays only courses where grades have been assigned
+ * (score > 0).
+ *
+ * Features:
+ * - Grade filtering (only shows graded courses)
+ * - Color-coded cards by performance (18+, 16+, 10+)
+ * - Large grade display with course info
+ * - Teacher name and ECTS
+ * - Empty state for no grades
+ *
+ * @param onBack Callback to navigate back
+ * @param viewModel ViewModel managing grades data
  */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentGradesScreen(
@@ -104,6 +116,22 @@ fun StudentGradesScreen(
     }
 }
 
+/**
+ * GradeCard - Individual grade display with color-coded background
+ *
+ * Displays course grade with associated design
+ * Card background color changes based on grade level
+ *
+ *
+ * Color coding (French scale 0-20):
+ * - 18+: Primary (Excellent)
+ * - 16+: Secondary (Very Good)
+ * - 10+: Tertiary (Passing)
+ * - <10: Error (Failing)
+ *
+ * @param subscription Course enrollment with grade
+ */
+
 @Composable
 private fun GradeCard(
     subscription: SubscribeWithCourseAndTeacher
@@ -130,6 +158,7 @@ private fun GradeCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             // Course info
             Column(
                 modifier = Modifier.weight(1f)
@@ -168,7 +197,7 @@ private fun GradeCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${course.ectsCourse.toInt()} CFU",
+                        text = "${course.ectsCourse.toInt()} ECTS",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

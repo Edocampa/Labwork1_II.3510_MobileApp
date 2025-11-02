@@ -60,7 +60,7 @@ fun StudentHomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // WELCOME HEADER
+            // Welcome Header
 
             Card(
                 modifier = Modifier
@@ -115,7 +115,7 @@ fun StudentHomeScreen(
                 }
             }
 
-            // MENU CARDS
+            // Menu cards
 
             Text(
                 text = "Your Actions",
@@ -167,7 +167,7 @@ fun StudentHomeScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // LOGOUT BUTTON
+            // Logout Button
 
             OutlinedButton(
                 onClick = onLogout,

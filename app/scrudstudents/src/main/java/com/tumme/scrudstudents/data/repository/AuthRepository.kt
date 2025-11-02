@@ -11,10 +11,25 @@ import com.tumme.scrudstudents.data.local.model.StudentEntity
 import com.tumme.scrudstudents.data.local.model.TeacherEntity
 
 /**
- * Auth Repository - Manages authentication state
+ * AuthRepository - Manages authentication and user session state
  *
- * It manages login, register, logout and current user state
+ * This repository handles all authentication operations including registration,
+ * login and logout
+ *
+ * Architecture Pattern:
+ * - Singleton: Only one instance exists throughout the app lifecycle
+ * - StateFlow: Reactive state management for current user
+ * - Dependency Injection: Injected by Hilt into ViewModels
+ *
+ * Responsibilities:
+ * - User registration (creates User + Student/Teacher profile)
+ * - User authentication (login/logout)
+ * - Session management (tracks current logged-in user)
+ * - Role-based profile creation
+ *
+ * @param scrudRepository Main repository for database operations
  */
+
 @Singleton
 class AuthRepository @Inject constructor(
     private val scrudRepository: SCRUDRepository
@@ -34,6 +49,7 @@ class AuthRepository @Inject constructor(
         level: String?
     ): Result<Unit> {
         return try {
+
             // Check if email exists
             if (scrudRepository.getUserByEmail(email) != null) {
                 return Result.failure(Exception("Email already exists"))

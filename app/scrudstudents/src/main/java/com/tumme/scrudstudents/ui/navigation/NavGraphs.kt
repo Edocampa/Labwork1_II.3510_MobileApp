@@ -62,10 +62,49 @@ object Routes {
      */
     const val STUDENT_DETAIL = "student_detail/{studentId}"
 
+    /**
+     * STUDENT_HOME - Student dashboard
+     * Main landing page after student login
+     * Provides navigation to all student features
+     */
+
+    const val STUDENT_HOME = "student_home"
+
+    /**
+     * STUDENT_COURSES - Browse courses by level
+     * Allows students to enroll in courses matching their level
+     */
+
+    const val STUDENT_COURSES = "student_courses"
+
+    /**
+     * STUDENT_SUBSCRIPTIONS - View enrolled courses
+     * Shows all courses the student is enrolled in with current grades
+     */
+    const val STUDENT_SUBSCRIPTIONS = "student_subscriptions"
+
+    /**
+     * STUDENT_GRADES - View grades per course
+     * Shows only graded courses (score > 0)
+     */
+
+    const val STUDENT_GRADES = "student_grades"
+
+    /**
+     * STUDENT_FINAL_GRADE - View weighted average
+     * Displays ECTS-weighted final grade with breakdown
+     */
+
+    const val STUDENT_FINAL_GRADE = "student_final_grade"
+
+    // Courses
+
     const val COURSE_LIST = "course_list"
     const val COURSE_FORM = "course_form"
 
     const val COURSE_EDIT = "course_form/{courseId}"
+
+    // Subscribes
 
     const val SUBSCRIBE_LIST = "subscribe_list"
     const val SUBSCRIBE_FORM = "subscribe_form"
@@ -74,22 +113,45 @@ object Routes {
     const val LOGIN = "login"
     const val REGISTER = "register"
 
-    // STUDENT ROUTES
-    const val STUDENT_HOME = "student_home"
-    const val STUDENT_COURSES = "student_courses"
-    const val STUDENT_SUBSCRIPTIONS = "student_subscriptions"
-    const val STUDENT_GRADES = "student_grades"
-    const val STUDENT_FINAL_GRADE = "student_final_grade"
-
     // TEACHER ROUTES
-    const val TEACHER_HOME = "teacher_home"
-    const val TEACHER_COURSES = "teacher_courses"
-    const val TEACHER_DECLARE = "teacher_declare_courses"
-    const val TEACHER_ENTER_GRADES = "teacher_enter_grades"
-    const val TEACHER_STUDENTS = "teacher_students"
 
+    /**
+     * TEACHER_HOME - Teacher dashboard
+     * Main landing page after teacher login
+     * Provides navigation to all teacher features
+     */
+    const val TEACHER_HOME = "teacher_home"
+
+    /**
+     * TEACHER_COURSES - Manage courses taught
+     * View, create, edit, delete courses
+     */
+    const val TEACHER_COURSES = "teacher_courses"
+
+    /**
+     * TEACHER_COURSE_FORM - Create new course
+     * Form to declare a new course (name, ECTS, level)
+     */
     const val TEACHER_COURSE_FORM = "teacher_course_form"
+
+    /**
+     * TEACHER_COURSE_EDIT - Edit existing course
+     * Dynamic route with courseId parameter
+     * Format: "teacher_course_edit/{courseId}"
+     */
     const val TEACHER_COURSE_EDIT = "teacher_course_edit/{courseId}"
+
+    /**
+     * TEACHER_ENTER_GRADES - Assign grades to students
+     * Two-step flow: select course → enter grades
+     */
+    const val TEACHER_ENTER_GRADES = "teacher_enter_grades"
+
+    /**
+     * TEACHER_STUDENTS - View enrolled students
+     * Shows students enrolled in teacher's courses with stats
+     */
+    const val TEACHER_STUDENTS = "teacher_students"
 }
 
 /**
@@ -217,24 +279,6 @@ fun AppNavHost(
             )
         }
 
-        composable(Routes.STUDENT_SUBSCRIPTIONS) {
-            StudentSubscriptionsScreen(
-                onBack = { navController.navigateUp() }
-            )
-        }
-
-        composable(Routes.STUDENT_GRADES) {
-            StudentGradesScreen(
-                onBack = { navController.navigateUp() }
-            )
-        }
-
-        composable(Routes.STUDENT_FINAL_GRADE) {
-            StudentFinalGradeScreen(
-                onBack = { navController.navigateUp() }
-            )
-        }
-
         // STUDENT SCREENS
 
         /**
@@ -291,6 +335,47 @@ fun AppNavHost(
             )
         }
 
+        /**
+         * STUDENT SUBSCRIPTIONS SCREEN - View enrolled courses
+         *
+         * Shows all courses the student is enrolled in
+         * Displays current grade for each course (or "Not graded yet")
+         *
+         */
+
+        composable(Routes.STUDENT_SUBSCRIPTIONS) {
+            StudentSubscriptionsScreen(
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        /**
+         * STUDENT GRADES SCREEN - View graded courses
+         *
+         * Shows only courses with grades assigned (score > 0)
+         *
+         */
+
+        composable(Routes.STUDENT_GRADES) {
+            StudentGradesScreen(
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        /**
+         * STUDENT FINAL GRADE SCREEN - Weighted average calculation
+         *
+         * Shows ECTS-weighted final grade with breakdown
+         * Formula: Final Grade = Σ(grade × ECTS) / Σ(ECTS)
+         *
+         */
+
+        composable(Routes.STUDENT_FINAL_GRADE) {
+            StudentFinalGradeScreen(
+                onBack = { navController.navigateUp() }
+            )
+        }
+
         // TEACHER SCREENS
 
         /**
@@ -327,6 +412,13 @@ fun AppNavHost(
             )
         }
 
+        /**
+         * TEACHER COURSES SCREEN - Manage courses
+         *
+         * View, create, edit and delete courses taught by teacher
+         *
+         */
+
         composable(Routes.TEACHER_COURSES) {
             TeacherCoursesScreen(
                 onBack = { navController.navigateUp() },
@@ -339,6 +431,17 @@ fun AppNavHost(
             )
         }
 
+        /**
+         * TEACHER COURSE FORM SCREEN - Create new course
+         *
+         * Form to declare a new course with:
+         * - Course name
+         * - ECTS (credits)
+         * - Level (P1-PhD)
+         *
+         * courseId = 0 indicates creation mode
+         */
+
         composable(Routes.TEACHER_COURSE_FORM) {
             TeacherCourseFormScreen(
                 courseId = 0,
@@ -346,6 +449,14 @@ fun AppNavHost(
                 onSaved = { navController.navigateUp() }
             )
         }
+
+        /**
+         * TEACHER COURSE EDIT SCREEN - Edit existing course
+         *
+         * Same form as create, but pre-filled with existing course data
+         *
+         * Dynamic route with courseId parameter
+         */
 
         composable(
             route = "teacher_course_edit/{courseId}",
@@ -361,11 +472,29 @@ fun AppNavHost(
             )
         }
 
+        /**
+         * TEACHER ENTER GRADES SCREEN - Assign grades to students
+         *
+         * Two-step flow:
+         * 1. Select course from list
+         * 2. View students and enter grades (0-20)
+         *
+         */
+
         composable(Routes.TEACHER_ENTER_GRADES) {
             TeacherEnterGradesScreen(
                 onBack = { navController.navigateUp() }
             )
         }
+
+        /**
+         * TEACHER STUDENTS SCREEN - View enrolled students
+         *
+         * Two-step flow:
+         * 1. Select course from list
+         * 2. View students with statistics
+         *
+         */
 
         composable(Routes.TEACHER_STUDENTS) {
             TeacherStudentsScreen(
