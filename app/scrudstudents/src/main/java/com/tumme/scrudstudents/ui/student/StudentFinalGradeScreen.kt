@@ -127,15 +127,10 @@ fun StudentFinalGradeScreen(
                 items(gradedCourses) { subscription ->
                     CourseBreakdownCard(subscription)
                 }
-
-                // Calculation explanation
-                item {
-                    CalculationExplanation(gradedCourses, finalGrade, totalCFU)
                 }
             }
         }
     }
-}
 
 @Composable
 private fun FinalGradeCard(
@@ -246,12 +241,12 @@ private fun FinalGradeCard(
                 label = {
                     Text(
                         text = when {
-                            finalGrade >= 18 -> "Excellent! 🌟"
-                            finalGrade >= 16 -> "Very Good! 👏"
-                            finalGrade >= 14 -> "Good! 👍"
-                            finalGrade >= 12 -> "Fair 📚"
-                            finalGrade >= 10 -> "Passing 💪"
-                            else -> "Keep Going! 💪"
+                            finalGrade >= 18 -> "Excellent! "
+                            finalGrade >= 16 -> "Very Good! "
+                            finalGrade >= 14 -> "Good! "
+                            finalGrade >= 12 -> "Fair "
+                            finalGrade >= 10 -> "Passing "
+                            else -> "Keep Going! "
                         },
                         fontWeight = FontWeight.Bold
                     )
@@ -300,7 +295,7 @@ private fun CourseBreakdownCard(
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(
-                        text = "${score.toInt()}/30",
+                        text = "${score.toInt()}/20",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -320,77 +315,12 @@ private fun CourseBreakdownCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${score.toInt()} × $cfu CFU",
+                    text = "$cfu CFU",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Text(
-                    text = "= ${weightedScore.roundToInt()}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
             }
         }
     }
 }
 
-@Composable
-private fun CalculationExplanation(
-    courses: List<SubscribeWithCourseAndTeacher>,
-    finalGrade: Float,
-    totalCFU: Int
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "How it's calculated",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            val totalWeighted = courses.sumOf {
-                (it.subscribe.score * it.courseWithTeacher.course.ectsCourse).toDouble()
-            }.roundToInt()
-
-            Text(
-                text = "Final Grade = Σ(grade × CFU) / Σ(CFU)",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "= $totalWeighted / $totalCFU",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "= ${String.format("%.1f", finalGrade)}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}

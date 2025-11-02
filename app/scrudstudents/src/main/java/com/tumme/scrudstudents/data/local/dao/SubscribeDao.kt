@@ -131,7 +131,7 @@ fun getSubscribesWithDetails(): Flow<List<SubscribeWithDetails>>
     /**
      * Update grade for a subscription
      */
-    @Query("UPDATE subscribes SET score = :score WHERE studentId = :subscribeId")
+    @Query("UPDATE subscribes SET score = :score WHERE id = :subscribeId")
     suspend fun updateGrade(subscribeId: Int, score: Float)
 
     /**
