@@ -118,7 +118,7 @@ fun StudentHomeScreen(
             // MENU CARDS
 
             Text(
-                text = "Quick Actions",
+                text = "Your Actions",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier

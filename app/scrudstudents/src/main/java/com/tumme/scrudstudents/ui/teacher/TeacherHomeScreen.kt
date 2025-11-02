@@ -82,7 +82,7 @@ fun TeacherHomeScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Welcome, Professor!",
+                        text = "Welcome back!",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -100,7 +100,7 @@ fun TeacherHomeScreen(
             // MENU CARDS
 
             Text(
-                text = "Teaching Tools",
+                text = "Your Tools",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
