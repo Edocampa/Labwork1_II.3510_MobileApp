@@ -14,6 +14,22 @@ import javax.inject.Inject
 
 /**
  * TeacherCoursesViewModel - Manages courses taught by teacher
+ *
+ * Handles CRUD operations for teacher's courses:
+ * - Read: Load courses taught by logged-in teacher
+ * - Delete: Remove courses (with cascade to subscriptions)
+ *
+ * Business Logic:
+ * - Filters courses by teacher ID
+ * - Auto-reloads list after deletion
+ * - Deletion cascades to subscriptions (removes student enrollments)
+ *
+ * Used by:
+ * - TeacherCoursesScreen (view/edit/delete courses)
+ * - TeacherCourseFormScreen (indirectly, triggers reload)
+ *
+ * @param repository Database operations
+ * @param authRepository Current user information
  */
 @HiltViewModel
 class TeacherCoursesViewModel @Inject constructor(
@@ -34,6 +50,16 @@ class TeacherCoursesViewModel @Inject constructor(
         loadCourses()
     }
 
+    /**
+     * Load courses taught by current teacher
+     *
+     *
+     * Filtering:
+     * - Only courses where course.teacherId = teacher.idTeacher
+     * - Other teachers' courses are not visible
+     *
+     */
+
     fun loadCourses() = viewModelScope.launch {
         _isLoading.value = true
         try {
@@ -50,6 +76,18 @@ class TeacherCoursesViewModel @Inject constructor(
             _isLoading.value = false
         }
     }
+
+    /**
+     * Delete a course
+     *
+     *
+     * Side effects:
+     * - Cascade deletion of subscriptions (students auto-unenrolled)
+     * - Defined by Room's @ForeignKey onDelete = CASCADE
+     *
+     *
+     * @param courseId ID of course to delete
+     */
 
     fun deleteCourse(courseId: Int) = viewModelScope.launch {
         try {

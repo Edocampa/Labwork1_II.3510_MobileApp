@@ -15,6 +15,27 @@ import javax.inject.Inject
 
 /**
  * TeacherStudentsViewModel - View enrolled students per course
+ *
+ * Two-step workflow:
+ * 1. Teacher selects a course from their taught courses
+ * 2. View students enrolled in that course with statistics
+ *
+ * Features:
+ * - Course selection
+ * - Student list with statistics
+ * - Course statistics (total, graded, average)
+ * - Read-only view (no grade input)
+ *
+ * Difference from EnterGradesViewModel:
+ * - Students: Read-only with stats (overview)
+ * - EnterGrades: Editable grades (action)
+ *
+ * Use case --> Teacher wants to see enrolled students and
+ * course performance metrics without editing grades
+ *
+ * @param repository Database operations
+ * @param authRepository Current user information
+ *
  */
 @HiltViewModel
 class TeacherStudentsViewModel @Inject constructor(
@@ -51,6 +72,12 @@ class TeacherStudentsViewModel @Inject constructor(
         loadTeacherCourses()
     }
 
+    /**
+     * Load courses taught by current teacher
+     *
+     * Shows list of courses teacher can view students for
+     */
+
     private fun loadTeacherCourses() = viewModelScope.launch {
         _isLoading.value = true
         try {
@@ -75,6 +102,19 @@ class TeacherStudentsViewModel @Inject constructor(
         _gradedStudents.value = 0
         _averageGrade.value = 0f
     }
+
+    /**
+     * Select a course and load students with statistics
+     *
+     * Loads student list and calculates course statistics
+     *
+     * Statistics calculated:
+     * 1. Total students: All enrolled students
+     * 2. Graded students: Students with score > 0
+     * 3. Average grade: Mean of all graded students
+     *
+     * @param course Course to view students for
+     */
 
     fun selectCourse(course: CourseEntity) = viewModelScope.launch {
         _selectedCourse.value = course

@@ -13,11 +13,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * StudentFinalGradeViewModel - Calculates weighted average grade
+ * StudentFinalGradeViewModel - Calculates ECTS-weighted average grade
+ *
+ * Implements weighted grade calculation using ECTS credits as weights
  *
  * Formula: Final Grade = Σ(grade × ECTS) / Σ(ECTS)
- * Only includes courses with grades (score > 0)
+ *
+ *
+ * Only includes courses with grades assigned (score > 0)
+ *
+ * @param repository Database operations
+ * @param authRepository Current user information
  */
+
 @HiltViewModel
 class StudentFinalGradeViewModel @Inject constructor(
     private val repository: SCRUDRepository,
@@ -42,6 +50,23 @@ class StudentFinalGradeViewModel @Inject constructor(
     init {
         loadFinalGrade()
     }
+
+    /**
+     * Load and calculate final weighted grade
+     *
+     * Steps:
+     * 1. Get student by current user ID
+     * 2. Load all subscriptions with course and teacher details
+     * 3. Filter only graded courses (score > 0)
+     * 4. Calculate weighted average using ECTS as weights
+     * 5. Update UI state
+     *
+     * Calculation breakdown:
+     * - totalWeightedScore = Σ(grade × ECTS)
+     * - totalECTS = Σ(ECTS)
+     * - finalGrade = totalWeightedScore / totalECTS
+     *
+     */
 
     private fun loadFinalGrade() = viewModelScope.launch {
         _isLoading.value = true
