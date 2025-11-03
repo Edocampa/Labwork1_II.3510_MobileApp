@@ -15,6 +15,25 @@ import javax.inject.Inject
 
 /**
  * TeacherEnterGradesViewModel - Manages grade entry for students
+ *
+ * Two-step workflow:
+ * 1. Teacher selects a course from their taught courses
+ * 2. View students enrolled in that course and assign/update grades
+ *
+ * Features:
+ * - Course selection
+ * - Student list with grade input
+ * - Grade validation (0-20 range)
+ * - Real-time grade updates
+ * - Two-level navigation (students → courses)
+ *
+ * Business Logic:
+ * - Only teacher's own courses are shown
+ * - Grades validated before saving (0-20)
+ * - Auto-reloads student list after grade update
+ *
+ * @param repository Database operations
+ * @param authRepository Current user information
  */
 @HiltViewModel
 class TeacherEnterGradesViewModel @Inject constructor(
@@ -41,6 +60,13 @@ class TeacherEnterGradesViewModel @Inject constructor(
         loadTeacherCourses()
     }
 
+    /**
+     * Load courses taught by current teacher
+     *
+     * Shows list of courses teacher can assign grades for
+     *
+     */
+
     private fun loadTeacherCourses() = viewModelScope.launch {
         _isLoading.value = true
         try {
@@ -58,6 +84,20 @@ class TeacherEnterGradesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Select a course and load enrolled students
+     *
+     * Transitions from course selection to student list
+     *
+     *
+     * Each student shows:
+     * - Student info (name, email, level)
+     * - Current grade (if assigned)
+     * - Input field to update grade
+     *
+     * @param course Course to assign grades for
+     */
+
     fun selectCourse(course: CourseEntity) = viewModelScope.launch {
         _selectedCourse.value = course
         _isLoading.value = true
@@ -70,10 +110,39 @@ class TeacherEnterGradesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Clear course selection
+     *
+     * Navigation: Student list → Course selection
+     *
+     * Resets:
+     * - Selected course to null
+     * - Student list to empty
+     * - Back to course selection screen
+     */
+
     fun clearSelection() {
         _selectedCourse.value = null
         _students.value = emptyList()
     }
+
+    /**
+     * Update a student's grade
+     *
+     * Validates grade range (0-20) and updates database
+     * Reloads student list to show updated grade immediately
+     *
+     *
+     * Validation:
+     * - score < 0 → Error message
+     * - score > 20 → Error message
+     * - 0 ≤ score ≤ 20 → Valid, update database
+     *
+     * score = 0 is valid (means "not graded yet")
+     *
+     * @param subscribeId ID of subscription to update
+     * @param score New grade (0-20)
+     */
 
     fun updateGrade(subscribeId: Int, score: Float) = viewModelScope.launch {
         if (score < 0 || score > 20) {

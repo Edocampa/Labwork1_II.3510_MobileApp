@@ -17,6 +17,19 @@ import kotlinx.coroutines.flow.toSet
 
 /**
  * StudentCoursesViewModel - Manages student course browsing and enrollment
+ *
+ * Handles:
+ * - Loading courses filtered by student's level
+ * - Tracking which courses student is enrolled in
+ * - Course enrollment with duplicate prevention
+ *
+ * Business Logic:
+ * - Filters courses by student's level from UserEntity.level
+ * - Prevents duplicate enrollments
+ * - Auto-loads enrolled course IDs on init
+ *
+ * @param repository Database operations
+ * @param authRepository Current user information
  */
 @HiltViewModel
 class StudentCoursesViewModel @Inject constructor(
@@ -24,15 +37,19 @@ class StudentCoursesViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
+    // Available courses (filtered by student's level)
     private val _courses = MutableStateFlow<List<CourseWithTeacher>>(emptyList())
     val courses: StateFlow<List<CourseWithTeacher>> = _courses.asStateFlow()
 
+    // Loading state for UI
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    // Success/error messages
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message.asStateFlow()
 
+    // Set of course IDs the student is enrolled in (for UI filtering)
     private val _enrolledCourseIds = MutableStateFlow<Set<Int>>(emptySet())
     val enrolledCourseIds: StateFlow<Set<Int>> = _enrolledCourseIds.asStateFlow()
 
@@ -40,6 +57,16 @@ class StudentCoursesViewModel @Inject constructor(
         loadCourses()
         loadEnrolledCourses()
     }
+
+    /**
+     * Load available courses filtered by student's level
+     *
+     * Logic:
+     * - If user has a level → filter courses by that level
+     * - If user has no level → show all courses
+     *
+     * Only courses matching student's level are shown
+     */
 
     private fun loadCourses() = viewModelScope.launch {
         _isLoading.value = true
@@ -57,6 +84,13 @@ class StudentCoursesViewModel @Inject constructor(
             _isLoading.value = false
         }
     }
+
+    /**
+     * Load courses the student is already enrolled in
+     *
+     *
+     * Used to show "Enrolled" badge on already-enrolled courses
+     */
 
     private fun loadEnrolledCourses() = viewModelScope.launch {
         val currentUser = authRepository.currentUser.value
@@ -77,6 +111,19 @@ class StudentCoursesViewModel @Inject constructor(
             }
         }
     }
+
+    /**
+     * Enroll student in a course
+     *
+     * Steps:
+     * 1. Get current student by user ID
+     * 2. Check if already enrolled
+     * 3. Create new subscription if not enrolled
+     * 4. Show success/error message
+     *
+     *
+     * @param courseId ID of course to enroll in
+     */
 
     fun enrollInCourse(courseId: Int) = viewModelScope.launch {
         _isLoading.value = true

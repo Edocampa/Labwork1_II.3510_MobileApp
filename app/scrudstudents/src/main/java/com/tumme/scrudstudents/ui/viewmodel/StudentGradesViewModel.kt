@@ -15,7 +15,18 @@ import javax.inject.Inject
 /**
  * StudentGradesViewModel - Manages student grades display
  *
- * Shows only courses with grades assigned (score > 0)
+ * Displays only courses where grades have been assigned by teachers
+ * Filters out courses with score = 0 (not yet graded)
+ *
+ * Difference from SubscriptionsViewModel:
+ * - Grades: Only score > 0 (graded courses)
+ * - Subscriptions: All enrollments (score >= 0)
+ *
+ * Use case --> Student wants to see only courses with final grades,
+ * not pending enrollments
+ *
+ * @param repository Database operations
+ * @param authRepository Current user information
  */
 @HiltViewModel
 class StudentGradesViewModel @Inject constructor(
@@ -35,6 +46,17 @@ class StudentGradesViewModel @Inject constructor(
     init {
         loadGrades()
     }
+
+    /**
+     * Load student's graded courses
+     *
+     * Filtering logic:
+     * - score = 0 → Not graded yet (excluded)
+     * - score > 0 → Graded (included)
+     *
+     * This ensures students only see courses where teachers
+     * have assigned final grades
+     */
 
     private fun loadGrades() = viewModelScope.launch {
         _isLoading.value = true

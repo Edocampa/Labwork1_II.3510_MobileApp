@@ -18,7 +18,7 @@ import javax.inject.Inject
  * Auth ViewModel - Manages authentication UI state
  *
  * Handles login and register flows, communicates with AuthRepository
- * Provides UI state (loading, errors, success) to composables
+ * Provides UI state (loading, errors, success)
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
