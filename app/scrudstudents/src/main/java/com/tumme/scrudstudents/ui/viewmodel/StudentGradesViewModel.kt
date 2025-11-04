@@ -16,7 +16,7 @@ import javax.inject.Inject
  * StudentGradesViewModel - Manages student grades display
  *
  * Displays only courses where grades have been assigned by teachers
- * Filters out courses with score = 0 (not yet graded)
+ * Filters out courses with score = 0 (not graded yet)
  *
  * Difference from SubscriptionsViewModel:
  * - Grades: Only score > 0 (graded courses)

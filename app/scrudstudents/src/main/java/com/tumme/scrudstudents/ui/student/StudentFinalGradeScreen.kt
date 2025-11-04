@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentFinalGradeViewModel
 import kotlin.math.roundToInt
+import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
 
 /**
  * StudentFinalGradeScreen - Display ECTS-weighted final grade
@@ -47,6 +48,9 @@ fun StudentFinalGradeScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val message by viewModel.message.collectAsState()
 
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val currentUser by authViewModel.currentUser.collectAsState()
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(message) {
@@ -67,7 +71,19 @@ fun StudentFinalGradeScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        floatingActionButton = {
+            // Only show if there are graded courses
+            if (gradedCourses.isNotEmpty()) {
+                ExportGradesButton(
+                    studentName = "${currentUser?.email?.substringBefore("@") ?: "Student"}",
+                    studentLevel = currentUser?.level ?: "Unknown",
+                    courses = gradedCourses,
+                    finalGrade = finalGrade,
+                    totalECTS = totalECTS
+                )
+            }
+        }
     ) { paddingValues ->
         if (isLoading) {
             Box(
