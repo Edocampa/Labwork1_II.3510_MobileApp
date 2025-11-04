@@ -82,7 +82,7 @@ class AuthRepository @Inject constructor(
             if (role == UserRole.TEACHER) {
                 val teacher = TeacherEntity(
                     userId = userId,
-                    firstName = email.substringBefore("@"),  // Temporary name
+                    firstName = email.substringBefore("@"),
                     lastName = ""
                 )
                 scrudRepository.insertTeacher(teacher)

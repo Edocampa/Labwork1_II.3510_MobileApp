@@ -20,7 +20,7 @@ import com.tumme.scrudstudents.ui.viewmodel.StudentSubscriptionsViewModel
  * StudentSubscriptionsScreen - View enrolled courses with grades
  *
  * Displays all courses the student is enrolled in
- * Shows current grade if assigned, or "Not graded yet"
+ * Shows current grade if assigned or "Not graded yet"
  *
  * Features:
  * - Complete enrollment list (graded and ungraded)

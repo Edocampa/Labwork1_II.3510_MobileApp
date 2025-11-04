@@ -72,7 +72,7 @@ class AuthViewModel @Inject constructor(
      * calls repository, emits events for UI
      *
      * @param email User email address
-     * @param password User password (plain text, will be stored as-is in dev)
+     * @param password User password
      * @param role User role (STUDENT or TEACHER)
      * @param level Study level (required only for STUDENT)
      */

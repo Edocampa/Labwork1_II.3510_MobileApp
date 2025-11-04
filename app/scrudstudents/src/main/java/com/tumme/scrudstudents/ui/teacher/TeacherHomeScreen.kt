@@ -178,7 +178,6 @@ fun TeacherHomeScreen(
  * MenuCard - Reusable navigation card component
  *
  * Displays a feature with icon, title, description and arrow
- * Can be highlighted for visual emphasis on primary actions
  *
  * Layout:
  * - Left: Icon in colored surface
