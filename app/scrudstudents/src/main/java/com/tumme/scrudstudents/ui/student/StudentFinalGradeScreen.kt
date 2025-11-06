@@ -19,6 +19,7 @@ import com.tumme.scrudstudents.ui.viewmodel.StudentFinalGradeViewModel
 import kotlin.math.roundToInt
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
 
+
 /**
  * StudentFinalGradeScreen - Display ECTS-weighted final grade
  *
@@ -72,18 +73,6 @@ fun StudentFinalGradeScreen(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = {
-            // Only show if there are graded courses
-            if (gradedCourses.isNotEmpty()) {
-                ExportGradesButton(
-                    studentName = "${currentUser?.email?.substringBefore("@") ?: "Student"}",
-                    studentLevel = currentUser?.level ?: "Unknown",
-                    courses = gradedCourses,
-                    finalGrade = finalGrade,
-                    totalECTS = totalECTS
-                )
-            }
-        }
     ) { paddingValues ->
         if (isLoading) {
             Box(
