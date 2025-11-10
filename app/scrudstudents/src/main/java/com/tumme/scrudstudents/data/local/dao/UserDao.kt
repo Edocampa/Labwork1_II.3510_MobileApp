@@ -61,6 +61,11 @@ interface UserDao {
     @Query("DELETE FROM users WHERE idUser = :userId")
     suspend fun deleteUser(userId: Int)
 
+
+    /**
+     *
+     * Get all user, only for admin
+     */
     @Query("SELECT * FROM users ORDER BY role, email")
     fun getAllUsersAdmin(): Flow<List<User>>
 
