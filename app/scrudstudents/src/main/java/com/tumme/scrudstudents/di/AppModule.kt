@@ -16,8 +16,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import com.tumme.scrudstudents.data.local.dao.UserDao
 import com.tumme.scrudstudents.data.local.dao.TeacherDao
 import com.tumme.scrudstudents.data.repository.AuthRepository
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import com.tumme.scrudstudents.data.local.model.UserRole
+import com.tumme.scrudstudents.data.local.model.User
 
 /**
  * HILT MODULE - Dependency Injection configuration for the entire app
@@ -66,16 +70,53 @@ object AppModule {
      *   - Automatically closed when app is destroyed
      *
      */
+
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(
+    fun provideDatabase(
+        @ApplicationContext context: Context):
+            AppDatabase {
+        val db = Room.databaseBuilder(
             context,
             AppDatabase::class.java,
             "scrud-db"
         )
             .fallbackToDestructiveMigration(true)
             .build()
+
+        // Create default admin when app starts
+
+        createDefaultAdmin(db)
+
+        return db
+    }
+
+    // Create default admin to manage system
+
+
+    private fun createDefaultAdmin(database: AppDatabase) {
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            try {
+                // Check if admin already exists
+                val existingAdmin = database.userDao().getUserByEmail("admin@administrator.com")
+
+                if (existingAdmin == null) {
+                    // Create default admin user
+                    val adminUser = User(
+                        email = "admin@administrator.com",
+                        password = "adminTest",
+                        role = UserRole.ADMIN,
+                        level = null
+                    )
+                    database.userDao().insertUser(adminUser)
+
+                    android.util.Log.d("AppModule", "Default admin created successfully")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("AppModule", "Error creating default admin", e)
+            }
+        }
+    }
 
     @Provides
     @Singleton

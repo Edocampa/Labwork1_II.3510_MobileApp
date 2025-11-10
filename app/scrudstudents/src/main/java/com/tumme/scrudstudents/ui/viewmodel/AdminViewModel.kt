@@ -11,6 +11,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * AdminViewModel - Manage admin operations
+ *
+ * Handles system-wide operations:
+ * - User management (view all users, delete users)
+ * - Global statistics (students, teachers, courses, subscriptions)
+ *
+ * Admin operations:
+ * - Cannot delete other admin accounts
+ * - Cascade deletion removes all associated data (courses, grades)
+ * - Statistics auto-refresh after user deletion
+ */
+
 @HiltViewModel
 class AdminViewModel @Inject constructor(
     private val repository: SCRUDRepository
@@ -33,11 +46,21 @@ class AdminViewModel @Inject constructor(
         loadStatistics()
     }
 
+    /**
+     * Load all users from database
+     * Collects Flow and updates UI reactively
+     */
+
     private fun loadUsers() = viewModelScope.launch {
         repository.getAllUsers().collect { users ->
             (allUsers as MutableStateFlow).value = users
         }
     }
+
+    /**
+    * Load system statistics
+    * Calculates totals across all entities
+    */
 
     private fun loadStatistics() = viewModelScope.launch {
         try {
@@ -47,6 +70,19 @@ class AdminViewModel @Inject constructor(
             _message.value = "Error loading statistics: ${e.message}"
         }
     }
+
+    /**
+     * Delete user from system (Admin action)
+     *
+     * Deletes user and all associated data via cascade:
+     * - User → Student/Teacher profile (CASCADE)
+     * - Student → Enrollments (CASCADE)
+     * - Teacher → Courses → Enrollments (CASCADE)
+     *
+     * Refreshes statistics after deletion
+     *
+     * @param userId ID of user to delete
+     */
 
     fun deleteUser(userId: Int) = viewModelScope.launch {
         try {

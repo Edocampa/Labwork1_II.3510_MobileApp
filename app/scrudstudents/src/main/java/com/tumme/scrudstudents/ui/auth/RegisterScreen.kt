@@ -166,20 +166,6 @@ fun RegisterScreen(
                             Icon(Icons.Default.AccountCircle, contentDescription = null)
                         }
                     )
-
-                    // Option to register like admin to testing
-
-                    DropdownMenuItem(
-                        text = { Text("Admin") },
-                        onClick = {
-                            selectedRole = UserRole.ADMIN
-                            showRoleMenu = false
-                            errorMessage = null
-                        },
-                        leadingIcon = {
-                            Icon(Icons.Default.AdminPanelSettings, contentDescription = null)
-                        }
-                    )
                 }
             }
 

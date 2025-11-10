@@ -16,6 +16,22 @@ import com.tumme.scrudstudents.data.local.model.User
 import com.tumme.scrudstudents.data.local.model.UserRole
 import com.tumme.scrudstudents.ui.viewmodel.AdminViewModel
 
+/**
+ * AdminHomeScreen - Admin dashboard
+ *
+ * Displays system statistics and user management interface
+ * Admin can view all users and delete Student/Teacher accounts
+ *
+ * Features:
+ * - Global statistics (total students, teachers, courses, enrollments)
+ * - User list with role indicators
+ * - Delete functionality with confirmation dialog
+ * - Admin accounts cannot be deleted
+ *
+ * @param onLogout Callback to logout and return to login screen
+ * @param viewModel AdminViewModel for data management
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminHomeScreen(
@@ -87,7 +103,7 @@ fun AdminHomeScreen(
                 }
             }
 
-            // Statistics
+            // Statistics section
             item {
                 Text(
                     text = "Statistics",
@@ -156,6 +172,17 @@ fun AdminHomeScreen(
     }
 }
 
+/**
+ * StatCard - Display single statistic
+ *
+ * Shows icon, value and label for system statistics
+ *
+ * @param title Statistic label
+ * @param value Numeric value to display
+ * @param icon Icon representing the statistic
+ * @param modifier Compose modifier
+ */
+
 @Composable
 private fun StatCard(
     title: String,
@@ -190,6 +217,17 @@ private fun StatCard(
         }
     }
 }
+
+/**
+ * UserCard - Display user with delete option
+ *
+ * Shows user email, role, level and delete button
+ * Admin accounts cannot be deleted
+ * Delete requires confirmation via dialog
+ *
+ * @param user User entity to display
+ * @param onDelete Callback when delete is confirmed
+ */
 
 @Composable
 private fun UserCard(
