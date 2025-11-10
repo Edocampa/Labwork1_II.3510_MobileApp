@@ -120,6 +120,7 @@ fun RegisterScreen(
                     value = when (selectedRole) {
                         UserRole.STUDENT -> "Student"
                         UserRole.TEACHER -> "Teacher"
+                        UserRole.ADMIN -> "Admin"
                     },
                     onValueChange = {},
                     readOnly = true,
@@ -163,6 +164,20 @@ fun RegisterScreen(
                         },
                         leadingIcon = {
                             Icon(Icons.Default.AccountCircle, contentDescription = null)
+                        }
+                    )
+
+                    // Option to register like admin to testing
+
+                    DropdownMenuItem(
+                        text = { Text("Admin") },
+                        onClick = {
+                            selectedRole = UserRole.ADMIN
+                            showRoleMenu = false
+                            errorMessage = null
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Default.AdminPanelSettings, contentDescription = null)
                         }
                     )
                 }
@@ -410,4 +425,5 @@ fun RegisterScreen(
             }
         }
     }
+
 }

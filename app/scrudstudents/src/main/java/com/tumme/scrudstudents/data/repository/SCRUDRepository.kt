@@ -311,5 +311,49 @@ class SCRUDRepository(
         subscribeDao.updateGrade(subscribeId, score)
     }
 
+    // Admin functions
+
+    /**
+     * Get all users (Admin only)
+     */
+    fun getAllUsersAdmin(): Flow<List<User>> {
+        return userDao.getAllUsers()
+    }
+
+    /**
+     * Delete user and cascade delete profile (Admin only)
+     */
+    suspend fun deleteUser(userId: Int) {
+        userDao.deleteUserById(userId)
+    }
+
+    /**
+     * Get statistics (Admin dashboard)
+     */
+    suspend fun getAdminStatistics(): AdminStatistics {
+        val totalStudents = userDao.countUsersByRole("STUDENT")
+        val totalTeachers = userDao.countUsersByRole("TEACHER")
+
+        val totalCourses = courseDao.getCoursesCount()
+        val totalEnrollments = subscribeDao.getSubscriptionsCount()
+
+        return AdminStatistics(
+            totalStudents = totalStudents,
+            totalTeachers = totalTeachers,
+            totalCourses = totalCourses,
+            totalEnrollments = totalEnrollments
+        )
+    }
+
+    /**
+     * Statistics data class
+     */
+    data class AdminStatistics(
+        val totalStudents: Int,
+        val totalTeachers: Int,
+        val totalCourses: Int,
+        val totalEnrollments: Int
+    )
+
 
 }

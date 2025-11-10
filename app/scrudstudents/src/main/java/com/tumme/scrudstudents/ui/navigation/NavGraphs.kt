@@ -28,6 +28,7 @@ import com.tumme.scrudstudents.ui.teacher.TeacherCourseFormScreen
 import com.tumme.scrudstudents.ui.teacher.TeacherCoursesScreen
 import com.tumme.scrudstudents.ui.teacher.TeacherEnterGradesScreen
 import com.tumme.scrudstudents.ui.teacher.TeacherStudentsScreen
+import com.tumme.scrudstudents.ui.admin.AdminHomeScreen
 /**
  * ROUTES - Central definition of all navigation destinations
  *
@@ -152,6 +153,12 @@ object Routes {
      * Shows students enrolled in teacher's courses with stats
      */
     const val TEACHER_STUDENTS = "teacher_students"
+
+    /**
+     * ADMIN_HOME - View statistics for admin role
+     * Shows all statistics about students,teachers,courses
+     */
+    const val ADMIN_HOME = "admin_home"
 }
 
 /**
@@ -243,6 +250,7 @@ fun AppNavHost(
                     val destination = when (user.role) {
                         UserRole.STUDENT -> Routes.STUDENT_HOME
                         UserRole.TEACHER -> Routes.TEACHER_HOME
+                        UserRole.ADMIN -> Routes.ADMIN_HOME
                     }
                     navController.navigate(destination) {
                         // popUpTo removes all screens up to LOGIN from back stack
@@ -694,6 +702,18 @@ fun AppNavHost(
             SubscribeFormScreen(
                 onSaved = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        // Admin Home
+        composable(Routes.ADMIN_HOME) {
+            AdminHomeScreen(
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
