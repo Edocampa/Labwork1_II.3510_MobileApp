@@ -61,5 +61,16 @@ interface UserDao {
     @Query("DELETE FROM users WHERE idUser = :userId")
     suspend fun deleteUser(userId: Int)
 
+    @Query("SELECT * FROM users ORDER BY role, email")
+    fun getAllUsersAdmin(): Flow<List<User>>
+
+
+    @Query("DELETE FROM users WHERE idUser = :userId")
+    suspend fun deleteUserById(userId: Int)
+
+    // Count users by role
+    @Query("SELECT COUNT(*) FROM users WHERE role = :role")
+    suspend fun countUsersByRole(role: String): Int
+
 
 }

@@ -99,5 +99,8 @@ interface CourseDao {
      */
     @Query("DELETE FROM courses WHERE idCourse = :courseId")
     suspend fun deleteById(courseId: Int)
+
+    @Query("SELECT COUNT(*) FROM courses")
+    suspend fun getCoursesCount(): Int
 }
 

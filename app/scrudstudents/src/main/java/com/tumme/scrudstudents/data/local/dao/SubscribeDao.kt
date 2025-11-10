@@ -147,6 +147,9 @@ fun getSubscribesWithDetails(): Flow<List<SubscribeWithDetails>>
         val studentLevel: String,
         val currentScore: Float
     )
+
+    @Query("SELECT COUNT(*) FROM subscribes")
+    suspend fun getSubscriptionsCount(): Int
 }
 
 /**
@@ -175,6 +178,8 @@ data class SubscribeWithDetails(
     val studentEmail: String,
     val courseName: String
 )
+
+
 
 
 
