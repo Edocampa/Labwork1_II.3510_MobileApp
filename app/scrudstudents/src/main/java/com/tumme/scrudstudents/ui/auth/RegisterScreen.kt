@@ -8,12 +8,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.UserRole
 import com.tumme.scrudstudents.ui.viewmodel.AuthEvent
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
@@ -50,6 +52,8 @@ fun RegisterScreen(
     // Available levels for students
     val levels = listOf("P1", "P2", "P3", "B1", "B2", "B3", "A1", "A2", "A3", "MS", "PhD")
 
+    val passwordsMismatchError = stringResource(R.string.passwords_do_not_match)
+
     // Event handling
 
     LaunchedEffect(Unit) {
@@ -71,7 +75,7 @@ fun RegisterScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Register") },
+                title = { Text( text = stringResource(R.string.register)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -95,7 +99,7 @@ fun RegisterScreen(
             // Header
 
             Text(
-                text = "Create Account",
+                text = stringResource(R.string.create_account),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -103,7 +107,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Register to get started",
+                text = stringResource(R.string.register_to_get_started),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -124,7 +128,7 @@ fun RegisterScreen(
                     },
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("I am a...") },
+                    label = { Text(stringResource(R.string.i_am_a)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Person,
@@ -145,7 +149,7 @@ fun RegisterScreen(
                     onDismissRequest = { showRoleMenu = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Student") },
+                        text = { Text(stringResource(R.string.student)) },
                         onClick = {
                             selectedRole = UserRole.STUDENT
                             showRoleMenu = false
@@ -156,7 +160,7 @@ fun RegisterScreen(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Teacher") },
+                        text = { Text(stringResource(R.string.teacher)) },
                         onClick = {
                             selectedRole = UserRole.TEACHER
                             showRoleMenu = false
@@ -182,7 +186,7 @@ fun RegisterScreen(
                         value = selectedLevel,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Level") },
+                        label = { Text(stringResource(R.string.level)) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Star,
@@ -226,8 +230,8 @@ fun RegisterScreen(
                     email = it
                     errorMessage = null
                 },
-                label = { Text("Email") },
-                placeholder = { Text("example@university.edu") },
+                label = { Text(stringResource(R.string.email)) },
+                placeholder = { Text(stringResource(R.string.example_university_edu)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -252,8 +256,8 @@ fun RegisterScreen(
                     password = it
                     errorMessage = null
                 },
-                label = { Text("Password") },
-                placeholder = { Text("At least 4 characters") },
+                label = { Text(stringResource(R.string.password)) },
+                placeholder = { Text(stringResource(R.string.at_least_4_characters)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
@@ -296,8 +300,8 @@ fun RegisterScreen(
                     confirmPassword = it
                     errorMessage = null
                 },
-                label = { Text("Confirm Password") },
-                placeholder = { Text("Re-enter your password") },
+                label = { Text(stringResource(R.string.confirm_password)) },
+                placeholder = { Text(stringResource(R.string.re_enter_your_password)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
@@ -354,7 +358,7 @@ fun RegisterScreen(
                 onClick = {
                     // Client-side validation for password match
                     if (password != confirmPassword) {
-                        errorMessage = "Passwords do not match"
+                        errorMessage = passwordsMismatchError
                         return@Button
                     }
 
@@ -381,7 +385,7 @@ fun RegisterScreen(
                     )
                 } else {
                     Text(
-                        text = "Register",
+                        text =  stringResource(R.string.register),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -396,7 +400,7 @@ fun RegisterScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Already have an account? ",
+                    text = stringResource(R.string.already_have_an_account),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 TextButton(
@@ -404,7 +408,7 @@ fun RegisterScreen(
                     enabled = !isLoading
                 ) {
                     Text(
-                        text = "Login",
+                        text = stringResource(id = R.string.login),
                         fontWeight = FontWeight.Bold
                     )
                 }

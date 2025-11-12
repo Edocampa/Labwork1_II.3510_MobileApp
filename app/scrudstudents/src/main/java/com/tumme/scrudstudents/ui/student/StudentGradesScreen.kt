@@ -9,9 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentGradesViewModel
 
@@ -54,7 +56,7 @@ fun StudentGradesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Grades") },
+                title = { Text(stringResource(R.string.my_grades)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -90,13 +92,13 @@ fun StudentGradesScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No grades yet",
+                        text = stringResource(id = R.string.no_grades_yet),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Your teachers haven't assigned grades yet",
+                        text = stringResource(R.string.your_teachers_haven_t_assigned_grades_yet),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -180,7 +182,11 @@ private fun GradeCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${teacher.firstName} ${teacher.lastName}",
+                        text = stringResource(
+                            R.string.first_name_last_name,
+                            teacher.firstName,
+                            teacher.lastName
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -197,7 +203,7 @@ private fun GradeCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${course.ectsCourse.toInt()} ECTS",
+                        text = stringResource(R.string.score_out_of_20, score.toInt()),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -226,7 +232,7 @@ private fun GradeCard(
                         }
                     )
                     Text(
-                        text = "/20",
+                        text = stringResource(id = R.string._20),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
