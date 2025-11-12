@@ -17,6 +17,8 @@ import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.User
 import com.tumme.scrudstudents.data.local.model.UserRole
 import com.tumme.scrudstudents.ui.viewmodel.AdminViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.tumme.scrudstudents.ui.viewmodel.AdminMessage
 
 
 /**
@@ -46,9 +48,21 @@ fun AdminHomeScreen(
     val message by viewModel.message.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+        message?.let { msg ->
+
+            val translatedMessage = when (msg) {
+                is AdminMessage.Simple -> {
+                    context.getString(msg.messageId)
+                }
+                is AdminMessage.Dynamic -> {
+                    context.getString(msg.baseMessageId, msg.dynamicPart)
+                }
+            }
+
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
         }
     }
@@ -273,8 +287,13 @@ private fun UserCard(
                     fontWeight = FontWeight.Bold
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    val roleText = when (user.role) {
+                        UserRole.STUDENT -> stringResource(R.string.student)
+                        UserRole.TEACHER -> stringResource(R.string.teacher)
+                        UserRole.ADMIN -> stringResource(R.string.admin)
+                    }
                     Text(
-                        text = user.role.name,
+                        text = roleText,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

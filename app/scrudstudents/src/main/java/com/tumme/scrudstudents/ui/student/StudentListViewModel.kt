@@ -5,11 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.tumme.scrudstudents.data.local.model.StudentEntity
 import com.tumme.scrudstudents.data.repository.SCRUDRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class StudentListEvent {
+    data class ShowMessage(val messageId: Int) : StudentListEvent()
+}
 
 /**
  * VIEWMODEL - Manages UI state and business logic for the Student List screen
@@ -71,7 +74,7 @@ class StudentListViewModel @Inject constructor(
      *
      * Private _events: Mutable version for emitting events
      */
-    private val _events = MutableSharedFlow<String>()
+    private val _events = MutableSharedFlow<StudentListEvent>()
 
     /**
      * Converts MutableSharedFlow to read-only SharedFlow
@@ -99,7 +102,7 @@ class StudentListViewModel @Inject constructor(
      */
     fun deleteStudent(student: StudentEntity) = viewModelScope.launch {
         repo.deleteStudent(student)
-        _events.emit("Student deleted")
+        _events.emit(StudentListEvent.ShowMessage(R.string.student_deleted))
     }
 
     /**
@@ -115,7 +118,7 @@ class StudentListViewModel @Inject constructor(
      */
     fun insertStudent(student: StudentEntity) = viewModelScope.launch {
         repo.insertStudent(student)
-        _events.emit("Student inserted")
+        _events.emit(StudentListEvent.ShowMessage(R.string.student_inserted))
     }
 
     /**

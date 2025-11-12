@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
 
 /**
  * Auth ViewModel - Manages authentication UI state
@@ -44,7 +45,7 @@ class AuthViewModel @Inject constructor(
     fun login(email: String, password: String) = viewModelScope.launch {
         // Input validation
         if (email.isBlank() || password.isBlank()) {
-            _events.emit(AuthEvent.Error("Email and password required"))
+            _events.emit(AuthEvent.Error(R.string.error_email_password_required))
             return@launch
         }
 
@@ -61,7 +62,8 @@ class AuthViewModel @Inject constructor(
         if (result.isSuccess) {
             _events.emit(AuthEvent.LoginSuccess(result.getOrNull()!!))
         } else {
-            _events.emit(AuthEvent.Error(result.exceptionOrNull()?.message ?: "Login failed"))
+            val errorMsg = result.exceptionOrNull()?.message ?: "Unknown error"
+            _events.emit(AuthEvent.Error(R.string.error_login_failed, errorMsg))
         }
     }
 
@@ -79,30 +81,38 @@ class AuthViewModel @Inject constructor(
     fun register(
         email: String,
         password: String,
+        firstName: String,
+        lastName: String,
         role: UserRole,
         level: String? = null
     ) = viewModelScope.launch {
+
+        if (email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()) {
+            _events.emit(AuthEvent.Error(R.string.error_all_fields_required))
+            return@launch
+        }
+
         // Input validation
         if (email.isBlank() || password.isBlank()) {
-            _events.emit(AuthEvent.Error("Email and password required"))
+            _events.emit(AuthEvent.Error(R.string.error_email_password_required))
             return@launch
         }
 
         // Students must have a level
         if (role == UserRole.STUDENT && level.isNullOrBlank()) {
-            _events.emit(AuthEvent.Error("Level required for students"))
+            _events.emit(AuthEvent.Error(R.string.error_level_required))
             return@launch
         }
 
         // Email format validation
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _events.emit(AuthEvent.Error("Invalid email format"))
+            _events.emit(AuthEvent.Error(R.string.error_invalid_email))
             return@launch
         }
 
         // Password length validation
         if (password.length < 4) {
-            _events.emit(AuthEvent.Error("Password must be at least 4 characters"))
+            _events.emit(AuthEvent.Error(R.string.error_password_length))
             return@launch
         }
 
@@ -110,7 +120,7 @@ class AuthViewModel @Inject constructor(
         _isLoading.value = true
 
         // Call repository
-        val result = authRepository.register(email, password, role, level)
+        val result = authRepository.register(email, password, firstName, lastName, role, level)
 
         // Hide loading indicator
         _isLoading.value = false
@@ -119,7 +129,8 @@ class AuthViewModel @Inject constructor(
         if (result.isSuccess) {
             _events.emit(AuthEvent.RegisterSuccess)
         } else {
-            _events.emit(AuthEvent.Error(result.exceptionOrNull()?.message ?: "Registration failed"))
+            val errorMsg = result.exceptionOrNull()?.message ?: "Unknown error"
+            _events.emit(AuthEvent.Error(R.string.error_registration_failed, errorMsg))
         }
     }
 
@@ -153,5 +164,5 @@ class AuthViewModel @Inject constructor(
 sealed class AuthEvent {
     data class LoginSuccess(val user: User) : AuthEvent()
     object RegisterSuccess : AuthEvent()
-    data class Error(val message: String) : AuthEvent()
+    data class Error(val messageId: Int, val dynamicPart: String? = null) : AuthEvent()
 }

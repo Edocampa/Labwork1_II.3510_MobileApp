@@ -9,9 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
 
 /**
@@ -54,7 +56,7 @@ fun TeacherHomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Teacher Dashboard") },
+                title = { Text(stringResource(R.string.teacher_dashboard)) },
                 actions = {
                     IconButton(onClick = onLogout) {
                         Icon(
@@ -99,7 +101,7 @@ fun TeacherHomeScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Welcome back!",
+                        text = stringResource(R.string.welcome_back),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -107,7 +109,7 @@ fun TeacherHomeScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = currentUser?.email ?: "Teacher",
+                        text = currentUser?.email ?: stringResource(id = R.string.teacher),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -117,7 +119,7 @@ fun TeacherHomeScreen(
             // Menu cards
 
             Text(
-                text = "Your Tools",
+                text = stringResource(R.string.your_tools),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -127,8 +129,8 @@ fun TeacherHomeScreen(
 
             // My Courses Card
             MenuCard(
-                title = "My Courses",
-                description = "View and manage courses you teach",
+                title = stringResource(id = R.string.my_courses),
+                description = stringResource(R.string.view_and_manage_courses_you_teach),
                 icon = Icons.Default.LibraryBooks,
                 onClick = onNavigateToCourses
             )
@@ -137,8 +139,8 @@ fun TeacherHomeScreen(
 
             // Enter Grades Card
             MenuCard(
-                title = "Enter Grades",
-                description = "Assign grades to students in your courses",
+                title = stringResource(id = R.string.enter_grades),
+                description = stringResource(R.string.assign_grades_to_students_in_your_courses),
                 icon = Icons.Default.Edit,
                 onClick = onNavigateToEnterGrades,
                 highlighted = true
@@ -148,8 +150,8 @@ fun TeacherHomeScreen(
 
             // My Students Card
             MenuCard(
-                title = "My Students",
-                description = "View students enrolled in your courses",
+                title = stringResource(R.string.my_students),
+                description = stringResource(R.string.view_students_enrolled_in_your_courses),
                 icon = Icons.Default.People,
                 onClick = onNavigateToStudents
             )
@@ -168,7 +170,7 @@ fun TeacherHomeScreen(
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Logout")
+                Text(stringResource(id = R.string.logout))
             }
         }
     }

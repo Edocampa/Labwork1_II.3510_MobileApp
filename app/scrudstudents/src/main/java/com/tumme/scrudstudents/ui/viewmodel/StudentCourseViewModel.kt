@@ -3,7 +3,6 @@ package com.tumme.scrudstudents.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
-import com.tumme.scrudstudents.data.local.model.SubscribeEntity
 import com.tumme.scrudstudents.data.repository.AuthRepository
 import com.tumme.scrudstudents.data.repository.SCRUDRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,8 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toSet
+import com.tumme.scrudstudents.R
+
+sealed class StudentCoursesMessage {
+    data class Simple(val messageId: Int) : StudentCoursesMessage()
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : StudentCoursesMessage()
+}
 
 /**
  * StudentCoursesViewModel - Manages student course browsing and enrollment
@@ -46,8 +50,8 @@ class StudentCoursesViewModel @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     // Success/error messages
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<StudentCoursesMessage?>(null)
+    val message: StateFlow<StudentCoursesMessage?> = _message.asStateFlow()
 
     // Set of course IDs the student is enrolled in (for UI filtering)
     private val _enrolledCourseIds = MutableStateFlow<Set<Int>>(emptySet())
@@ -79,7 +83,10 @@ class StudentCoursesViewModel @Inject constructor(
                 _courses.value = repository.getCoursesWithTeachers()
             }
         } catch (e: Exception) {
-            _message.value = "Error loading courses: ${e.message}"
+            _message.value = StudentCoursesMessage.Dynamic(
+                R.string.error_loading_courses,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }
@@ -107,7 +114,10 @@ class StudentCoursesViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _message.value = "Error loading enrollments: ${e.message}"
+                _message.value = StudentCoursesMessage.Dynamic(
+                    R.string.error_loading_enrollments,
+                    e.message ?: "Unknown error"
+                )
             }
         }
     }
@@ -135,16 +145,19 @@ class StudentCoursesViewModel @Inject constructor(
                     // Check if already enrolled
                     val isAlreadyEnrolled = repository.isStudentEnrolled(student.idStudent, courseId)
                     if (isAlreadyEnrolled) {
-                        _message.value = "Already enrolled in this course"
+                        _message.value = StudentCoursesMessage.Simple(R.string.error_already_enrolled)
                     } else {
                         // Create new subscription
                         repository.enrollStudent(student.idStudent, courseId)
-                        _message.value = "Enrolled successfully!"
+                        _message.value = StudentCoursesMessage.Simple(R.string.enroll_success)
                     }
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error enrolling: ${e.message}"
+            _message.value = StudentCoursesMessage.Dynamic(
+                R.string.error_enrolling,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }

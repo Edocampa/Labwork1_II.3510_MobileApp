@@ -23,6 +23,7 @@ import com.tumme.scrudstudents.data.local.model.User
 import com.tumme.scrudstudents.ui.viewmodel.AuthEvent
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * Login Screen - User authentication
@@ -46,7 +47,11 @@ fun LoginScreen(
 
     val isLoading by viewModel.isLoading.collectAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     // Event Handling
+
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
@@ -55,7 +60,12 @@ fun LoginScreen(
                     onLoginSuccess(event.user)
                 }
                 is AuthEvent.Error -> {
-                    errorMessage = event.message
+                    val finalMessage = if (event.dynamicPart == null) {
+                        context.getString(event.messageId)
+                    } else {
+                        context.getString(event.messageId, event.dynamicPart)
+                    }
+                    errorMessage = finalMessage
                 }
                 else -> {}
             }

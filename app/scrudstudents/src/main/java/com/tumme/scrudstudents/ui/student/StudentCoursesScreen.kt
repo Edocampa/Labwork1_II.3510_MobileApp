@@ -16,6 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentCoursesViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.tumme.scrudstudents.ui.viewmodel.StudentCoursesMessage
 
 /**
  * StudentCoursesScreen - Browse and enroll in courses
@@ -46,10 +48,23 @@ fun StudentCoursesScreen(
     // Show snackbar for messages
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     // Show message in snackbar when it changes
+
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+        message?.let { msg ->
+
+            val translatedMessage = when (msg) {
+                is StudentCoursesMessage.Simple -> {
+                    context.getString(msg.messageId)
+                }
+                is StudentCoursesMessage.Dynamic -> {
+                    context.getString(msg.baseMessageId, msg.dynamicPart)
+                }
+            }
+
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
         }
     }
@@ -219,7 +234,7 @@ private fun CourseCard(
             if (isEnrolled) {
                 AssistChip(
                     onClick = { },
-                    label = { Text(stringResource(R.string.enroll_in_course)) },
+                    label = { Text(stringResource(R.string.enrolled_in_course)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,

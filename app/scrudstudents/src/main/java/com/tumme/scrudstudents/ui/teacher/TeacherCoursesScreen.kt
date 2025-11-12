@@ -9,11 +9,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.data.local.model.CourseEntity
 import com.tumme.scrudstudents.ui.viewmodel.TeacherCoursesViewModel
+import com.tumme.scrudstudents.R
+import androidx.compose.ui.platform.LocalContext
+import com.tumme.scrudstudents.ui.viewmodel.TeacherCoursesMessage
 
 /**
 * TeacherCoursesScreen - Manage courses taught by teacher
@@ -53,9 +57,21 @@ fun TeacherCoursesScreen(
         viewModel.loadCourses()
     }
 
+    val context = LocalContext.current
+
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+        message?.let { msg ->
+
+            val translatedMessage = when (msg) {
+                is TeacherCoursesMessage.Simple -> {
+                    context.getString(msg.messageId)
+                }
+                is TeacherCoursesMessage.Dynamic -> {
+                    context.getString(msg.baseMessageId, msg.dynamicPart)
+                }
+            }
+
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
         }
     }
@@ -63,7 +79,7 @@ fun TeacherCoursesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Courses") },
+                title = { Text(stringResource(R.string.my_courses)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -107,13 +123,13 @@ fun TeacherCoursesScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No courses yet",
+                        text = stringResource(R.string.no_courses_yet),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Tap + to declare a new course",
+                        text = stringResource(R.string.tap_to_declare_a_new_course),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -192,7 +208,7 @@ private fun TeacherCourseCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${course.ectsCourse.toInt()} ECTS",
+                            text = stringResource(id = R.string.ects, course.ectsCourse),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -209,7 +225,7 @@ private fun TeacherCourseCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Level: ${course.levelCourse}",
+                            text = stringResource(id = R.string.level_course, course.levelCourse),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -238,7 +254,7 @@ private fun TeacherCourseCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Edit")
+                    Text(stringResource(R.string.edit))
                 }
 
                 OutlinedButton(
@@ -254,7 +270,7 @@ private fun TeacherCourseCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Delete")
+                    Text(stringResource(id = R.string.delete))
                 }
             }
         }
@@ -264,8 +280,12 @@ private fun TeacherCourseCard(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Course?") },
-            text = { Text("Are you sure you want to delete '${course.nameCourse}'? This action cannot be undone.") },
+            title = { Text(stringResource(R.string.delete_course)) },
+            text = { Text(
+                stringResource(
+                    R.string.are_you_sure_you_want_to_delete_this_action_cannot_be_undone,
+                    course.nameCourse
+                )) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -276,12 +296,12 @@ private fun TeacherCourseCard(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Delete")
+                    Text(stringResource(id = R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )

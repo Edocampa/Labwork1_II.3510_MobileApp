@@ -34,6 +34,8 @@ data class User(
     val email: String,
     val password: String,
     val role: UserRole,
+    val firstName: String,
+    val lastName: String,
     val level: String? = null // Only used if role = STUDENT
 )
 

@@ -11,6 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class StudentSubscriptionsMessage {
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : StudentSubscriptionsMessage()
+}
 
 /**
  * StudentSubscriptionsViewModel - Manages student course enrollments
@@ -46,8 +52,8 @@ class StudentSubscriptionsViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<StudentSubscriptionsMessage?>(null)
+    val message: StateFlow<StudentSubscriptionsMessage?> = _message.asStateFlow()
 
     init {
         loadSubscriptions()
@@ -75,7 +81,10 @@ class StudentSubscriptionsViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error loading subscriptions: ${e.message}"
+            _message.value = StudentSubscriptionsMessage.Dynamic(
+                R.string.error_loading_subscriptions,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }

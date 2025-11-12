@@ -20,6 +20,9 @@ import com.tumme.scrudstudents.data.local.model.UserRole
 import com.tumme.scrudstudents.ui.viewmodel.AuthEvent
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 /**
  * Register Screen - Create new user account
@@ -35,6 +38,9 @@ fun RegisterScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     // State
+
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -54,6 +60,8 @@ fun RegisterScreen(
 
     val passwordsMismatchError = stringResource(R.string.passwords_do_not_match)
 
+    val context = LocalContext.current
+
     // Event handling
 
     LaunchedEffect(Unit) {
@@ -63,7 +71,12 @@ fun RegisterScreen(
                     onRegisterSuccess()
                 }
                 is AuthEvent.Error -> {
-                    errorMessage = event.message
+                    val finalMessage = if (event.dynamicPart == null) {
+                        context.getString(event.messageId)
+                    } else {
+                        context.getString(event.messageId, event.dynamicPart)
+                    }
+                    errorMessage = finalMessage
                 }
                 else -> {}
             }
@@ -91,9 +104,9 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(24.dp),
+                .padding(horizontal = 24.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
 
             // Header
@@ -221,6 +234,48 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
+
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = {
+                    firstName = it
+                    errorMessage = null
+                },
+                label = { Text(stringResource(R.string.first_name)) },
+                placeholder = { Text(stringResource(R.string.mario)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = stringResource(R.string.first_name)
+                    )
+                },
+                singleLine = true,
+                enabled = !isLoading,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = {
+                    lastName = it
+                    errorMessage = null
+                },
+                label = { Text(stringResource(R.string.last_name)) },
+                placeholder = { Text("Rossi") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = stringResource(R.string.last_name)
+                    )
+                },
+                singleLine = true,
+                enabled = !isLoading,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Email Input
 
@@ -366,6 +421,8 @@ fun RegisterScreen(
                     viewModel.register(
                         email = email,
                         password = password,
+                        firstName = firstName,
+                        lastName = lastName,
                         role = selectedRole,
                         level = if (selectedRole == UserRole.STUDENT) selectedLevel else null
                     )
@@ -373,7 +430,9 @@ fun RegisterScreen(
                 enabled = !isLoading &&
                         email.isNotBlank() &&
                         password.isNotBlank() &&
-                        confirmPassword.isNotBlank(),
+                        confirmPassword.isNotBlank() &&
+                        firstName.isNotBlank() &&
+                        lastName.isNotBlank(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)

@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.data.local.model.SubscribeEntity
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.ui.res.stringResource
+import com.tumme.scrudstudents.R
 
 /**
  * COMPOSABLE SCREEN - List of all subscribes
@@ -61,13 +63,13 @@ fun SubscribeListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Subscribes") },
+                title = { Text(stringResource(id = R.string.subscribes))},
                 actions = {
                     TextButton(onClick = onNavigateToStudents) {
-                        Text("STUDENTS")
+                        Text(stringResource(id = R.string.students))
                     }
                     TextButton(onClick = onNavigateToCourses) {
-                        Text("COURSES")
+                        Text(stringResource(id = R.string.courses))
                     }
                 }
 
@@ -186,7 +188,7 @@ fun SubscribeItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "${subscribeDetail.studentFirstName} ${subscribeDetail.studentLastName}",
+                    text = stringResource(id = R.string.full_name_student),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -201,7 +203,7 @@ fun SubscribeItem(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Score: %.1f / 20".format(subscribeDetail.score),
+                    text = stringResource(R.string.score_1f_20).format(subscribeDetail.score),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -253,12 +255,12 @@ fun EditScoreDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Update Score")
+            Text(stringResource(R.string.update_score))
         },
         text = {
             Column {
                 Text(
-                    text = "${subscribeDetail.studentFirstName} ${subscribeDetail.studentLastName}",
+                    text = stringResource(id = R.string.full_name_student),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
@@ -272,7 +274,7 @@ fun EditScoreDialog(
                 OutlinedTextField(
                     value = scoreText,
                     onValueChange = { scoreText = it },
-                    label = { Text("New Score (0-20)") },
+                    label = { Text(stringResource(R.string.new_score_0_20)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -285,12 +287,12 @@ fun EditScoreDialog(
                     onConfirm(newScore)
                 }
             ) {
-                Text("Save")
+                Text(stringResource(id = R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel))
             }
         }
     )

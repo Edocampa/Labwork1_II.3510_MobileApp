@@ -11,6 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class TeacherCoursesMessage {
+    data class Simple(val messageId: Int) : TeacherCoursesMessage()
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : TeacherCoursesMessage()
+}
 
 /**
  * TeacherCoursesViewModel - Manages courses taught by teacher
@@ -43,8 +50,8 @@ class TeacherCoursesViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<TeacherCoursesMessage?>(null)
+    val message: StateFlow<TeacherCoursesMessage?> = _message.asStateFlow()
 
     init {
         loadCourses()
@@ -71,7 +78,10 @@ class TeacherCoursesViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error loading courses: ${e.message}"
+            _message.value = TeacherCoursesMessage.Dynamic(
+                R.string.error_loading_courses,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }
@@ -93,9 +103,12 @@ class TeacherCoursesViewModel @Inject constructor(
         try {
             repository.deleteCourse(courseId)
             loadCourses() // Reload list
-            _message.value = "Course deleted"
+            _message.value = TeacherCoursesMessage.Simple(R.string.course_deleted)
         } catch (e: Exception) {
-            _message.value = "Error deleting course: ${e.message}"
+            _message.value = TeacherCoursesMessage.Dynamic(
+                R.string.error_deleting_course,
+                e.message ?: "Unknown error"
+            )
         }
     }
 

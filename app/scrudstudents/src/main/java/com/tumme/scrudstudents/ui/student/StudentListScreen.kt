@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 
 /**
  * COMPOSABLE SCREEN - Displays the list of all students
@@ -85,15 +87,15 @@ fun StudentListScreen(
              * Shows the screen title "Students"
              */
             TopAppBar(
-                title = { Text("Students") },
+                title = { Text(stringResource(id = R.string.students)) },
                 actions = {
 
                     TextButton(onClick = onNavigateToCourses) {
-                        Text("COURSES")
+                        Text(stringResource(id = R.string.courses))
                     }
 
                     TextButton(onClick = onNavigateToSubscribes) {
-                        Text("SUBSCRIBES")
+                        Text(stringResource(id = R.string.teachers))
                     }
                 }
             )
@@ -107,7 +109,7 @@ fun StudentListScreen(
              *
              */
             FloatingActionButton(onClick = onNavigateToForm) {
-                Text("+") // Plus icon to indicate "add new"
+                Text(stringResource(R.string.add))
             }
         }
     ) { padding ->
