@@ -11,6 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class StudentGradesMessage {
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : StudentGradesMessage()
+}
 
 /**
  * StudentGradesViewModel - Manages student grades display
@@ -40,8 +46,8 @@ class StudentGradesViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<StudentGradesMessage?>(null)
+    val message: StateFlow<StudentGradesMessage?> = _message.asStateFlow()
 
     init {
         loadGrades()
@@ -71,7 +77,10 @@ class StudentGradesViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error loading grades: ${e.message}"
+            _message.value = StudentGradesMessage.Dynamic(
+                R.string.error_loading_grades,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }

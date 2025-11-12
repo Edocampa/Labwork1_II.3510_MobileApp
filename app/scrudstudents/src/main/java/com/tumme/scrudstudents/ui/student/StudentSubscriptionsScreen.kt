@@ -9,12 +9,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.wear.compose.material.ChipDefaults
 import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentSubscriptionsViewModel
+import com.tumme.scrudstudents.R
+import androidx.compose.ui.platform.LocalContext
+import com.tumme.scrudstudents.ui.viewmodel.StudentSubscriptionsMessage
 
 /**
  * StudentSubscriptionsScreen - View enrolled courses with grades
@@ -46,9 +49,18 @@ fun StudentSubscriptionsScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+        message?.let { msg ->
+
+            val translatedMessage = when (msg) {
+                is StudentSubscriptionsMessage.Dynamic -> {
+                    context.getString(msg.baseMessageId, msg.dynamicPart)
+                }
+            }
+
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
         }
     }
@@ -56,7 +68,7 @@ fun StudentSubscriptionsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Subscriptions") },
+                title = { Text(stringResource(id = R.string.my_subscriptions)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -92,12 +104,12 @@ fun StudentSubscriptionsScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No enrolled courses",
+                        text = stringResource(R.string.no_enrolled_courses),
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Browse courses to enroll",
+                        text = stringResource(R.string.browse_courses_to_enroll),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -167,7 +179,11 @@ private fun SubscriptionCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${teacher.firstName} ${teacher.lastName}",
+                    text = stringResource(
+                        R.string.first_name_last_name,
+                        teacher.firstName,
+                        teacher.lastName
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -185,7 +201,7 @@ private fun SubscriptionCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${course.ectsCourse.toInt()} ECTS",
+                    text = stringResource(id = R.string.ects, course.ectsCourse),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -203,7 +219,7 @@ private fun SubscriptionCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Level: ${course.levelCourse}",
+                    text = stringResource(id = R.string.level_course, course.levelCourse),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -222,7 +238,7 @@ private fun SubscriptionCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Grade:",
+                    text = stringResource(R.string.grade),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -239,7 +255,7 @@ private fun SubscriptionCard(
                         shape = MaterialTheme.shapes.medium
                     ) {
                         Text(
-                            text = "${score.toInt()}/20",
+                            text = stringResource(R.string.score_out_of_20, score.toInt()),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -248,7 +264,7 @@ private fun SubscriptionCard(
                 } else {
                     AssistChip(
                         onClick = { },
-                        label = { Text("Not graded yet") },
+                        label = { Text(stringResource(id = R.string.no_grades_yet)) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.HourglassEmpty,

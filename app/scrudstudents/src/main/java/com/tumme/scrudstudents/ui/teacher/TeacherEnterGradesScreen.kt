@@ -10,13 +10,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.CourseEntity
 import com.tumme.scrudstudents.data.local.model.StudentWithGrade
 import com.tumme.scrudstudents.ui.viewmodel.TeacherEnterGradesViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.tumme.scrudstudents.ui.viewmodel.TeacherEnterGradesMessage
 
 /**
  * TeacherEnterGradesScreen - Assign grades to students
@@ -50,9 +54,21 @@ fun TeacherEnterGradesScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+        message?.let { msg ->
+
+            val translatedMessage = when (msg) {
+                is TeacherEnterGradesMessage.Simple -> {
+                    context.getString(msg.messageId)
+                }
+                is TeacherEnterGradesMessage.Dynamic -> {
+                    context.getString(msg.baseMessageId, msg.dynamicPart)
+                }
+            }
+
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
         }
     }
@@ -61,7 +77,7 @@ fun TeacherEnterGradesScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(selectedCourse?.nameCourse ?: "Enter Grades")
+                    Text(selectedCourse?.nameCourse ?: stringResource(R.string.enter_grades))
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -142,13 +158,13 @@ private fun CourseSelectionView(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No courses found",
+                    text = stringResource(R.string.no_courses_found),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Declare courses first to enter grades",
+                    text = stringResource(R.string.declare_courses_first_to_enter_grades),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -160,7 +176,7 @@ private fun CourseSelectionView(
             ) {
                 item {
                     Text(
-                        text = "Select a course to enter grades",
+                        text = stringResource(R.string.select_a_course_to_enter_grades),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -209,7 +225,11 @@ private fun CourseSelectionCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${course.ectsCourse.toInt()} ECTS • Level ${course.levelCourse}",
+                    text = stringResource(
+                        R.string.ects_level,
+                        course.ectsCourse.toInt(),
+                        course.levelCourse
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -261,13 +281,13 @@ private fun StudentGradesListView(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No students enrolled",
+                    text = stringResource(R.string.no_students_enrolled),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Students need to enroll in this course",
+                    text = stringResource(R.string.students_need_to_enroll_in_this_course),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -332,7 +352,12 @@ private fun StudentGradeCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "${student.studentFirstName} ${student.studentLastName}",
+                        text = stringResource(
+                            id = R.string.full_name_student,
+                            student.studentFirstName,
+                            student.studentLastName
+
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -361,7 +386,7 @@ private fun StudentGradeCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Level: ${student.studentLevel}",
+                            text = stringResource(id = R.string.level_course, student.studentLevel),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -387,8 +412,8 @@ private fun StudentGradeCard(
                             isEditing = true
                         }
                     },
-                    label = { Text("Grade") },
-                    placeholder = { Text("0-20") },
+                    label = { Text(stringResource(id = R.string.grade)) },
+                    placeholder = { Text(stringResource(id = R.string.score_0_20)) },
                     leadingIcon = {
                         Icon(Icons.Default.Edit, null)
                     },
@@ -411,7 +436,7 @@ private fun StudentGradeCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Save")
+                    Text(stringResource(id = R.string.save))
                 }
             }
 
@@ -438,7 +463,10 @@ private fun StudentGradeCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Current grade: ${student.currentScore.toInt()}/20",
+                            text = stringResource(
+                                R.string.current_grade_20,
+                                student.currentScore.toInt()
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium
                         )

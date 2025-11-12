@@ -9,9 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
 
 /**
@@ -39,7 +41,7 @@ fun StudentHomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Student Dashboard") },
+                title = { Text(stringResource(R.string.student_dashboard)) },
                 actions = {
                     IconButton(onClick = onLogout) {
                         Icon(
@@ -84,7 +86,7 @@ fun StudentHomeScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Welcome Back!",
+                        text = stringResource(id = R.string.welcome),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -92,7 +94,7 @@ fun StudentHomeScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = currentUser?.email ?: "Student",
+                        text = currentUser?.email ?: stringResource(id = R.string.student),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -102,7 +104,10 @@ fun StudentHomeScreen(
 
                         AssistChip(
                             onClick = { },
-                            label = { Text("Level: ${currentUser?.level}") },
+                            label = { Text(stringResource(
+                                id = R.string.user_level,
+                                currentUser!!.level!!
+                            )) },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Star,
@@ -118,7 +123,7 @@ fun StudentHomeScreen(
             // Menu cards
 
             Text(
-                text = "Your Actions",
+                text = stringResource(R.string.your_actions),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -128,8 +133,8 @@ fun StudentHomeScreen(
 
             // Browse Courses Card
             MenuCard(
-                title = "Browse Courses",
-                description = "Explore and enroll in available courses",
+                title = stringResource(id = R.string.browse_courses),
+                description = stringResource(R.string.explore_and_enroll_in_available_courses),
                 icon = Icons.Default.LibraryBooks,
                 onClick = onNavigateToCourses
             )
@@ -138,8 +143,8 @@ fun StudentHomeScreen(
 
             // My Subscriptions Card
             MenuCard(
-                title = "My Subscriptions",
-                description = "View courses you're enrolled in",
+                title = stringResource(R.string.my_subscriptions),
+                description = stringResource(R.string.view_courses_you_re_enrolled_in),
                 icon = Icons.Default.CheckCircle,
                 onClick = onNavigateToSubscriptions
             )
@@ -148,8 +153,8 @@ fun StudentHomeScreen(
 
             // My Grades Card
             MenuCard(
-                title = "My Grades",
-                description = "Check your grades for each course",
+                title = stringResource(id = R.string.my_grades),
+                description = stringResource(R.string.check_your_grades_for_each_course),
                 icon = Icons.Default.Assessment,
                 onClick = onNavigateToGrades
             )
@@ -158,8 +163,8 @@ fun StudentHomeScreen(
 
             // Final Grade Card
             MenuCard(
-                title = "Final Grade",
-                description = "View your weighted average grade",
+                title = stringResource(id = R.string.final_grade),
+                description = stringResource(R.string.view_your_weighted_average_grade),
                 icon = Icons.Default.EmojiEvents,
                 onClick = onNavigateToFinalGrade,
                 highlighted = true
@@ -179,7 +184,7 @@ fun StudentHomeScreen(
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Logout")
+                Text(stringResource(R.string.logout))
             }
         }
     }

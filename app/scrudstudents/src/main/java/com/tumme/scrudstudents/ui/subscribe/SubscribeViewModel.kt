@@ -11,6 +11,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class SubscribeEvent {
+    data class ShowMessage(val messageId: Int) : SubscribeEvent()
+}
 
 /**
  * VIEWMODEL - Manages UI state and business logic for Subscribe screens
@@ -85,7 +90,7 @@ class SubscribeViewModel @Inject constructor(
      * - "Score updated"
      * - "Error: Student already enrolled in this course"
      */
-    private val _events = MutableSharedFlow<String>()
+    private val _events = MutableSharedFlow<SubscribeEvent>()
     val events = _events.asSharedFlow()
 
     /**
@@ -101,7 +106,7 @@ class SubscribeViewModel @Inject constructor(
      */
     fun deleteSubscribe(subscribe: SubscribeEntity) = viewModelScope.launch {
         repo.deleteSubscribe(subscribe)
-        _events.emit("Enrollment deleted")
+        _events.emit(SubscribeEvent.ShowMessage(R.string.enrollment_deleted))
     }
 
     /**
@@ -122,25 +127,25 @@ class SubscribeViewModel @Inject constructor(
     fun insertSubscribe(subscribe: SubscribeEntity) = viewModelScope.launch {
         // Validation: Check if student ID is valid
         if (subscribe.studentId <= 0) {
-            _events.emit("Error: Please select a student")
+            _events.emit(SubscribeEvent.ShowMessage(R.string.error_select_student))
             return@launch
         }
 
         // Validation: Check if course ID is valid
         if (subscribe.courseId <= 0) {
-            _events.emit("Error: Please select a course")
+            _events.emit(SubscribeEvent.ShowMessage(R.string.error_select_course))
             return@launch
         }
 
         // Validation: Score must be between 0 and 20
         if (subscribe.score < 0 || subscribe.score > 20) {
-            _events.emit("Error: Score must be between 0 and 20")
+            _events.emit(SubscribeEvent.ShowMessage(R.string.error_score_range))
             return@launch
         }
 
         // All validations passed, insert/update subscription
         repo.insertSubscribe(subscribe)
-        _events.emit("Enrollment saved")
+        _events.emit(SubscribeEvent.ShowMessage(R.string.enrollment_saved))
     }
 
     /**

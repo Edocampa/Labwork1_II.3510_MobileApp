@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +22,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+import androidx.compose.ui.platform.LocalContext
+
 
 /**
  * TeacherCourseFormScreen - Create or edit a course
@@ -54,7 +58,8 @@ fun TeacherCourseFormScreen(
     var showLevelMenu by remember { mutableStateOf(false) }
 
     val isLoading by viewModel.isLoading.collectAsState()
-    val message by viewModel.message.collectAsState()
+
+    val messageId by viewModel.message.collectAsState()
 
     val levels = listOf("P1", "P2", "P3", "B1", "B2", "B3", "A1", "A2", "A3", "MS", "PhD")
 
@@ -75,11 +80,14 @@ fun TeacherCourseFormScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+    val context = LocalContext.current
+    LaunchedEffect(messageId) {
+        messageId?.let { id ->
+            val translatedMessage = context.getString(id)
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
-            if (it.contains("success", ignoreCase = true)) {
+
+            if (id == R.string.course_created_success || id == R.string.course_updated_success) {
                 onSaved()
             }
         }
@@ -88,7 +96,9 @@ fun TeacherCourseFormScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (courseId == 0) "New Course" else "Edit Course") },
+                title = { Text(if (courseId == 0) stringResource(id = R.string.new_course) else stringResource(
+                    com.tumme.scrudstudents.R.string.edit_course
+                )) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -109,8 +119,8 @@ fun TeacherCourseFormScreen(
             OutlinedTextField(
                 value = courseName,
                 onValueChange = { courseName = it },
-                label = { Text("Course Name") },
-                placeholder = { Text("e.g., Advanced English Literature") },
+                label = { Text(stringResource(id = R.string.course_name)) },
+                placeholder = { Text(stringResource(R.string.e_g_advanced_java_programming)) },
                 leadingIcon = {
                     Icon(Icons.Default.LibraryBooks, null)
                 },
@@ -122,8 +132,7 @@ fun TeacherCourseFormScreen(
             OutlinedTextField(
                 value = ects,
                 onValueChange = { if (it.all { char -> char.isDigit() }) ects = it },
-                label = { Text("ECTS (Credits)") },
-                placeholder = { Text("6, 9, or 12") },
+                label = { Text(stringResource(id = R.string.ects_credits)) },
                 leadingIcon = {
                     Icon(Icons.Default.Star, null)
                 },
@@ -141,7 +150,7 @@ fun TeacherCourseFormScreen(
                     value = level,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Level") },
+                    label = { Text(stringResource(id = R.string.level)) },
                     leadingIcon = {
                         Icon(Icons.Default.School, null)
                     },
@@ -198,7 +207,7 @@ fun TeacherCourseFormScreen(
                 } else {
                     Icon(Icons.Default.Save, null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(if (courseId == 0) "Create Course" else "Update Course")
+                    Text(if (courseId == 0) stringResource(R.string.create_course) else stringResource(id = R.string.update_course))
                 }
             }
         }
@@ -232,8 +241,8 @@ class TeacherCourseFormViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<Int?>(null)
+    val message: StateFlow<Int?> = _message.asStateFlow()
 
     /**
      * Load existing course data for editing
@@ -245,7 +254,7 @@ class TeacherCourseFormViewModel @Inject constructor(
         try {
             _course.value = repository.getCourseById(courseId)
         } catch (e: Exception) {
-            _message.value = "Error loading course: ${e.message}"
+            _message.value = R.string.error_loading_course
         }
     }
 
@@ -266,11 +275,11 @@ class TeacherCourseFormViewModel @Inject constructor(
 
     fun saveCourse(courseId: Int, name: String, ects: Int, level: String) = viewModelScope.launch {
         if (name.isBlank()) {
-            _message.value = "Course name is required"
+            _message.value = R.string.error_course_name_required
             return@launch
         }
         if (ects <= 0) {
-            _message.value = "ECTS must be greater than 0"
+            _message.value = R.string.error_ects_must_be_positive
             return@launch
         }
 
@@ -290,17 +299,17 @@ class TeacherCourseFormViewModel @Inject constructor(
 
                     if (courseId == 0) {
                         repository.insertCourse(course)
-                        _message.value = "Course created successfully"
+                        _message.value = R.string.course_created_success
                     } else {
                         repository.updateCourse(course)
-                        _message.value = "Course updated successfully"
+                        _message.value = R.string.course_updated_success
                     }
                 } else {
-                    _message.value = "Teacher profile not found"
+                    _message.value = R.string.error_teacher_not_found
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error saving course: ${e.message}"
+            _message.value = R.string.error_saving_course
         } finally {
             _isLoading.value = false
         }

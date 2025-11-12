@@ -12,6 +12,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class TeacherEnterGradesMessage {
+    data class Simple(val messageId: Int) : TeacherEnterGradesMessage()
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : TeacherEnterGradesMessage()
+}
 
 /**
  * TeacherEnterGradesViewModel - Manages grade entry for students
@@ -53,8 +60,8 @@ class TeacherEnterGradesViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<TeacherEnterGradesMessage?>(null)
+    val message: StateFlow<TeacherEnterGradesMessage?> = _message.asStateFlow()
 
     init {
         loadTeacherCourses()
@@ -78,7 +85,10 @@ class TeacherEnterGradesViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error loading courses: ${e.message}"
+            _message.value = TeacherEnterGradesMessage.Dynamic(
+                R.string.error_loading_courses,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }
@@ -104,7 +114,10 @@ class TeacherEnterGradesViewModel @Inject constructor(
         try {
             _students.value = repository.getStudentsInCourseWithGrades(course.idCourse)
         } catch (e: Exception) {
-            _message.value = "Error loading students: ${e.message}"
+            _message.value = TeacherEnterGradesMessage.Dynamic(
+                R.string.error_loading_students,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }
@@ -146,7 +159,7 @@ class TeacherEnterGradesViewModel @Inject constructor(
 
     fun updateGrade(subscribeId: Int, score: Float) = viewModelScope.launch {
         if (score < 0 || score > 20) {
-            _message.value = "Grade must be between 0 and 20"
+            _message.value = TeacherEnterGradesMessage.Simple(R.string.error_grade_range)
             return@launch
         }
 
@@ -156,9 +169,12 @@ class TeacherEnterGradesViewModel @Inject constructor(
             _selectedCourse.value?.let { course ->
                 _students.value = repository.getStudentsInCourseWithGrades(course.idCourse)
             }
-            _message.value = "Grade updated successfully"
+            _message.value = TeacherEnterGradesMessage.Simple(R.string.grade_updated_success)
         } catch (e: Exception) {
-            _message.value = "Error updating grade: ${e.message}"
+            _message.value = TeacherEnterGradesMessage.Dynamic(
+                R.string.error_updating_grade,
+                e.message ?: "Unknown error"
+            )
         }
     }
 

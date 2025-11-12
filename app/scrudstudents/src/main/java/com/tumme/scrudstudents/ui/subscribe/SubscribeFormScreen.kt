@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.SubscribeEntity
 import com.tumme.scrudstudents.data.local.model.StudentEntity
 import com.tumme.scrudstudents.data.local.model.CourseEntity
@@ -66,7 +68,7 @@ fun SubscribeFormScreen(
          * SCREEN TITLE
          */
         Text(
-            text = "New Enrollment",
+            text = stringResource(R.string.new_enrollment),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -81,7 +83,7 @@ fun SubscribeFormScreen(
          *
          */
         Text(
-            text = "Select Student",
+            text = stringResource(R.string.select_student),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -99,11 +101,11 @@ fun SubscribeFormScreen(
              */
             OutlinedTextField(
                 value = selectedStudent?.let {
-                    "${it.firstName} ${it.lastName}"
-                } ?: "-- Select a student --",
+                    stringResource(R.string.full_name_student, it.firstName, it.lastName)
+                } ?: stringResource(R.string.select_a_student),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Student") },
+                label = { Text(stringResource(id = R.string.student)) },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedStudentDropdown)
                 },
@@ -133,7 +135,7 @@ fun SubscribeFormScreen(
                 students.forEach { student ->
                     DropdownMenuItem(
                         text = {
-                            Text("${student.firstName} ${student.lastName}")
+                            Text(stringResource(id = R.string.full_name_student))
                         },
                         onClick = {
                             selectedStudent = student  // Update selected student
@@ -153,7 +155,7 @@ fun SubscribeFormScreen(
          *
          */
         Text(
-            text = "Select Course",
+            text = stringResource(R.string.select_course),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -168,11 +170,16 @@ fun SubscribeFormScreen(
              */
             OutlinedTextField(
                 value = selectedCourse?.let {
-                    "${it.nameCourse} (${it.ectsCourse} ECTS - ${it.levelCourse})"
-                } ?: "-- Select a course --",
+                    stringResource(
+                        R.string.nameCourse_ects_level,
+                        it.nameCourse,
+                        it.ectsCourse,
+                        it.levelCourse
+                    )
+                } ?: stringResource(R.string.select_a_course),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Course") },
+                label = { Text(stringResource(R.string.course)) },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCourseDropdown)
                 },
@@ -196,7 +203,7 @@ fun SubscribeFormScreen(
                 courses.forEach { course ->
                     DropdownMenuItem(
                         text = {
-                            Text("${course.nameCourse} (${course.ectsCourse} ECTS - ${course.levelCourse})")
+                            Text(stringResource(id = R.string.nameCourse_ects_level))
                         },
                         onClick = {
                             selectedCourse = course  // Update selected course
@@ -222,11 +229,11 @@ fun SubscribeFormScreen(
         OutlinedTextField(
             value = scoreText,
             onValueChange = { scoreText = it },
-            label = { Text("Score (0-20)") },
+            label = { Text(stringResource(R.string.score_0_20)) },
             modifier = Modifier.fillMaxWidth(),
             supportingText = {
                 Text(
-                    "Enter the student's grade (0 to 20)",
+                    stringResource(R.string.enter_the_student_s_grade_0_to_20),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
@@ -280,7 +287,7 @@ fun SubscribeFormScreen(
                     selectedCourse != null &&
                     scoreText.isNotBlank()  // Enable only if all fields filled
         ) {
-            Text("Save Enrollment")
+            Text(stringResource(R.string.save_enrollment))
         }
 
         /**
@@ -289,7 +296,7 @@ fun SubscribeFormScreen(
         if (selectedStudent == null || selectedCourse == null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "⚠️ Please select both student and course",
+                text = stringResource(R.string.please_select_both_student_and_course),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )

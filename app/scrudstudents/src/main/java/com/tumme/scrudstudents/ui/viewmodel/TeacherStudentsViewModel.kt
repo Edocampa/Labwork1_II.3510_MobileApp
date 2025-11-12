@@ -12,6 +12,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class TeacherStudentsMessage {
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : TeacherStudentsMessage()
+}
 
 /**
  * TeacherStudentsViewModel - View enrolled students per course
@@ -55,8 +61,8 @@ class TeacherStudentsViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<TeacherStudentsMessage?>(null)
+    val message: StateFlow<TeacherStudentsMessage?> = _message.asStateFlow()
 
     // Stats
     private val _totalStudents = MutableStateFlow(0)
@@ -89,7 +95,10 @@ class TeacherStudentsViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error loading courses: ${e.message}"
+            _message.value = TeacherStudentsMessage.Dynamic(
+                R.string.error_loading_courses,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }
@@ -134,7 +143,10 @@ class TeacherStudentsViewModel @Inject constructor(
                 _averageGrade.value = 0f
             }
         } catch (e: Exception) {
-            _message.value = "Error loading students: ${e.message}"
+            _message.value = TeacherStudentsMessage.Dynamic(
+                R.string.error_loading_students,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }

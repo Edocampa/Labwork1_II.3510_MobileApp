@@ -11,6 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class StudentFinalGradeMessage {
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : StudentFinalGradeMessage()
+}
 
 /**
  * StudentFinalGradeViewModel - Calculates ECTS-weighted average grade
@@ -44,8 +50,8 @@ class StudentFinalGradeViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<StudentFinalGradeMessage?>(null)
+    val message: StateFlow<StudentFinalGradeMessage?> = _message.asStateFlow()
 
     init {
         loadFinalGrade()
@@ -99,7 +105,10 @@ class StudentFinalGradeViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            _message.value = "Error calculating final grade: ${e.message}"
+            _message.value = StudentFinalGradeMessage.Dynamic(
+                R.string.error_calculating_final_grade,
+                e.message ?: "Unknown error"
+            )
         } finally {
             _isLoading.value = false
         }

@@ -45,6 +45,8 @@ class AuthRepository @Inject constructor(
     suspend fun register(
         email: String,
         password: String,
+        firstName: String,
+        lastName: String,
         role: UserRole,
         level: String?
     ): Result<Unit> {
@@ -64,6 +66,8 @@ class AuthRepository @Inject constructor(
             val user = User(
                 email = email,
                 password = password,
+                firstName = firstName,
+                lastName = lastName,
                 role = role,
                 level = level
             )
@@ -72,8 +76,8 @@ class AuthRepository @Inject constructor(
             if (role == UserRole.STUDENT && level != null) {
                 val student = StudentEntity(
                     userId = userId,
-                    firstName = email.substringBefore("@"),
-                    lastName = "",
+                    firstName = firstName,
+                    lastName = lastName,
                     level = level
                 )
                 scrudRepository.insertStudent(student)
@@ -82,8 +86,8 @@ class AuthRepository @Inject constructor(
             if (role == UserRole.TEACHER) {
                 val teacher = TeacherEntity(
                     userId = userId,
-                    firstName = email.substringBefore("@"),
-                    lastName = ""
+                    firstName = firstName,
+                    lastName = lastName,
                 )
                 scrudRepository.insertTeacher(teacher)
             }

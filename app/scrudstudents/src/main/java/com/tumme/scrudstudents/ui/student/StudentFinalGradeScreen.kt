@@ -18,8 +18,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentFinalGradeViewModel
-import kotlin.math.roundToInt
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.tumme.scrudstudents.ui.viewmodel.StudentFinalGradeMessage
 
 
 /**
@@ -56,9 +57,18 @@ fun StudentFinalGradeScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+        message?.let { msg ->
+
+            val translatedMessage = when (msg) {
+                is StudentFinalGradeMessage.Dynamic -> {
+                    context.getString(msg.baseMessageId, msg.dynamicPart)
+                }
+            }
+
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
         }
     }
@@ -363,7 +373,7 @@ private fun CourseBreakdownCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(id = R.string.ects),
+                    text = stringResource(id = R.string.ects, course.ectsCourse),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

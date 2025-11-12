@@ -10,6 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.tumme.scrudstudents.R
+
+sealed class AdminMessage {
+    data class Simple(val messageId: Int) : AdminMessage()
+
+    data class Dynamic(val baseMessageId: Int, val dynamicPart: String) : AdminMessage()
+}
 
 /**
  * AdminViewModel - Manage admin operations
@@ -38,8 +45,8 @@ class AdminViewModel @Inject constructor(
     val statistics: StateFlow<SCRUDRepository.AdminStatistics> = _statistics.asStateFlow()
 
     // Messages
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<AdminMessage?>(null)
+    val message: StateFlow<AdminMessage?> = _message.asStateFlow()
 
     init {
         loadUsers()
@@ -67,7 +74,10 @@ class AdminViewModel @Inject constructor(
             val stats = repository.getAdminStatistics()
             _statistics.value = stats
         } catch (e: Exception) {
-            _message.value = "Error loading statistics: ${e.message}"
+            _message.value = AdminMessage.Dynamic(
+                R.string.error_loading_stats,
+                e.message ?: "Unknown error"
+            )
         }
     }
 
@@ -87,10 +97,13 @@ class AdminViewModel @Inject constructor(
     fun deleteUser(userId: Int) = viewModelScope.launch {
         try {
             repository.deleteUser(userId)
-            _message.value = "User deleted successfully"
+            _message.value = AdminMessage.Simple(R.string.user_deleted_success)
             loadStatistics()
         } catch (e: Exception) {
-            _message.value = "Error deleting user: ${e.message}"
+            _message.value = AdminMessage.Dynamic(
+                R.string.error_deleting_user,
+                e.message ?: "Unknown error"
+            )
         }
     }
 

@@ -106,6 +106,8 @@ object AppModule {
                         email = "admin@administrator.com",
                         password = "adminTest",
                         role = UserRole.ADMIN,
+                        firstName = "admin",
+                        lastName = "admin",
                         level = null
                     )
                     database.userDao().insertUser(adminUser)

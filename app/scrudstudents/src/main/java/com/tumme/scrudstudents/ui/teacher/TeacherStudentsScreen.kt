@@ -9,12 +9,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.data.local.model.CourseEntity
 import com.tumme.scrudstudents.data.local.model.StudentWithGrade
 import com.tumme.scrudstudents.ui.viewmodel.TeacherStudentsViewModel
+import com.tumme.scrudstudents.R
+import androidx.compose.ui.platform.LocalContext
+import com.tumme.scrudstudents.ui.viewmodel.TeacherStudentsMessage
 
 /**
  * TeacherStudentsScreen - View enrolled students per course
@@ -56,9 +60,19 @@ fun TeacherStudentsScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(it)
+        message?.let { msg ->
+
+            val translatedMessage = when (msg) {
+                is TeacherStudentsMessage.Dynamic -> {
+                    context.getString(msg.baseMessageId, msg.dynamicPart)
+                }
+
+            }
+
+            snackbarHostState.showSnackbar(translatedMessage)
             viewModel.clearMessage()
         }
     }
@@ -67,7 +81,7 @@ fun TeacherStudentsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(selectedCourse?.nameCourse ?: "My Students")
+                    Text(selectedCourse?.nameCourse ?: stringResource(id = R.string.my_students))
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -157,13 +171,13 @@ private fun CourseSelectionView(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No courses found",
+                    text = stringResource(id = R.string.no_courses_found),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Declare courses to see enrolled students",
+                    text = stringResource(R.string.declare_courses_to_see_enrolled_students),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -175,7 +189,7 @@ private fun CourseSelectionView(
             ) {
                 item {
                     Text(
-                        text = "Select a course to view students",
+                        text = stringResource(R.string.select_a_course_to_view_students),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -223,7 +237,7 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${course.ectsCourse.toInt()} ECTS • Level ${course.levelCourse}",
+                    text = stringResource(id = R.string.ects_level, course.ectsCourse.toInt(), course.levelCourse),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -263,7 +277,7 @@ private fun StatsSection(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Course Statistics",
+            text = stringResource(R.string.course_statistics),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
@@ -275,7 +289,7 @@ private fun StatsSection(
             // Total students
             StatCard(
                 icon = Icons.Default.People,
-                label = "Students",
+                label = stringResource(id = R.string.students),
                 value = totalStudents.toString(),
                 modifier = Modifier.weight(1f)
             )
@@ -283,7 +297,7 @@ private fun StatsSection(
             // Graded students
             StatCard(
                 icon = Icons.Default.Assessment,
-                label = "Graded",
+                label = stringResource(R.string.graded),
                 value = gradedStudents.toString(),
                 modifier = Modifier.weight(1f)
             )
@@ -291,7 +305,7 @@ private fun StatsSection(
             // Average grade
             StatCard(
                 icon = Icons.Default.Star,
-                label = "Average",
+                label = stringResource(R.string.average),
                 value = if (averageGrade > 0) String.format("%.1f", averageGrade) else "-",
                 modifier = Modifier.weight(1f),
                 color = when {
@@ -393,13 +407,13 @@ private fun StudentsList(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No students enrolled",
+                    text = stringResource(id = R.string.no_students_enrolled),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Students need to enroll in this course",
+                    text = stringResource(id = R.string.assign_grades_to_students_in_your_courses),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -446,7 +460,7 @@ private fun StudentInfoCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "${student.studentFirstName} ${student.studentLastName}",
+                    text = stringResource(id = R.string.full_name_student, student.studentFirstName, student.studentLastName),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -475,7 +489,7 @@ private fun StudentInfoCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Level: ${student.studentLevel}",
+                        text = stringResource(R.string.level_student, student.studentLevel),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -494,7 +508,10 @@ private fun StudentInfoCard(
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text(
-                        text = "${student.currentScore.toInt()}/20",
+                        text = stringResource(
+                            id = R.string.score_out_of_20,
+                            student.currentScore.toInt()
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -503,7 +520,7 @@ private fun StudentInfoCard(
             } else {
                 AssistChip(
                     onClick = { },
-                    label = { Text("Not graded") },
+                    label = { Text(stringResource(R.string.not_graded_yet)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.HourglassEmpty,
