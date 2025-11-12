@@ -9,9 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.CourseWithTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentCoursesViewModel
 
@@ -55,7 +57,7 @@ fun StudentCoursesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Browse Courses") },
+                title = { Text(stringResource(R.string.browse_courses)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -92,7 +94,7 @@ fun StudentCoursesScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No courses available",
+                        text = stringResource(R.string.no_courses_available),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -161,7 +163,11 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${courseWithTeacher.teacher.firstName} ${courseWithTeacher.teacher.lastName}",
+                    text = stringResource(
+                        R.string.first_name_last_name,
+                        courseWithTeacher.teacher.firstName,
+                        courseWithTeacher.teacher.lastName
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -181,7 +187,7 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${courseWithTeacher.course.ectsCourse} ECTS",
+                    text = stringResource(R.string.ects, courseWithTeacher.course.ectsCourse),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -198,7 +204,10 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Level: ${courseWithTeacher.course.levelCourse}",
+                    text = stringResource(
+                        R.string.level_course,
+                        courseWithTeacher.course.levelCourse
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -210,7 +219,7 @@ private fun CourseCard(
             if (isEnrolled) {
                 AssistChip(
                     onClick = { },
-                    label = { Text("Enrolled") },
+                    label = { Text(stringResource(R.string.enroll_in_course)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
@@ -234,7 +243,7 @@ private fun CourseCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Enroll in Course")
+                    Text(stringResource(R.string.enroll_in_course))
                 }
             }
         }

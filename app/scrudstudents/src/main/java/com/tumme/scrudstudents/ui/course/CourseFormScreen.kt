@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.CourseEntity
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * COURSE FORM SCREEN - Create or update a course
@@ -70,17 +73,23 @@ fun CourseFormScreen(
      * This ensures proper feedback to the user when validation fails
      * or when the save operation succeeds.
      */
+
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
-        viewModel.events.collect { message ->
-            if (message.contains("saved", ignoreCase = true)) {
-                // Success: navigate back to list
-                onSaved()
-            } else {
-                // Error: show snackbar with error message
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    duration = SnackbarDuration.Short
-                )
+        viewModel.events.collect { event ->
+            when (event) {
+                is CourseEvent.SaveSuccess -> {
+                    onSaved()
+                }
+
+                is CourseEvent.ShowMessage -> {
+                    val message = context.getString(event.messageId)
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
             }
         }
     }
@@ -136,7 +145,7 @@ fun CourseFormScreen(
              * SCREEN TITLE - Changes based on mode
              */
             Text(
-                text = if (isEditMode) "Update course" else "New course",
+                text = if (isEditMode) stringResource(R.string.update_course) else stringResource(R.string.new_course),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
@@ -147,7 +156,7 @@ fun CourseFormScreen(
             OutlinedTextField(
                 value = nameCourse,
                 onValueChange = { nameCourse = it },
-                label = { Text("Course name") },
+                label = { Text(stringResource(R.string.course_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -163,11 +172,11 @@ fun CourseFormScreen(
             OutlinedTextField(
                 value = ectsText,
                 onValueChange = { ectsText = it },
-                label = { Text("ECTS Credits") },
+                label = { Text(stringResource(R.string.ects_credits)) },
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
                     Text(
-                        "It must be > 0",
+                        stringResource(R.string.it_must_be_0),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -189,7 +198,7 @@ fun CourseFormScreen(
                     value = levelCourse,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Academic level") },
+                    label = { Text(stringResource(R.string.academic_level)) },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDropdown)
                     },
@@ -257,7 +266,7 @@ fun CourseFormScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = nameCourse.isNotBlank() && ectsText.isNotBlank()
             ) {
-                Text(if (isEditMode) "Update course" else "Save course")
+                Text(if (isEditMode) stringResource(R.string.update_course) else stringResource(id = R.string.save_course))
             }
         }
     }

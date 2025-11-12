@@ -11,12 +11,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.User
 import com.tumme.scrudstudents.ui.viewmodel.AuthEvent
 import com.tumme.scrudstudents.ui.viewmodel.AuthViewModel
@@ -65,7 +67,7 @@ fun LoginScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Login") }
+                title = { Text(stringResource(R.string.login)) }
             )
         }
     ) { paddingValues ->
@@ -81,7 +83,7 @@ fun LoginScreen(
             // Header
 
             Text(
-                text = "Welcome!",
+                text = stringResource(R.string.welcome),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -89,7 +91,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Login to continue",
+                text = stringResource(R.string.login_to_continue),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -104,8 +106,8 @@ fun LoginScreen(
                     email = it
                     errorMessage = null
                 },
-                label = { Text("Email") },
-                placeholder = { Text("example@university.edu") },
+                label = { Text(stringResource(R.string.email)) },
+                placeholder = { Text(stringResource(R.string.example_university_edu)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -130,8 +132,8 @@ fun LoginScreen(
                     password = it
                     errorMessage = null
                 },
-                label = { Text("Password") },
-                placeholder = { Text("Enter your password") },
+                label = { Text(stringResource(R.string.password)) },
+                placeholder = { Text(stringResource(R.string.enter_your_password)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
@@ -200,7 +202,7 @@ fun LoginScreen(
                     )
                 } else {
                     Text(
-                        text = "Login",
+                        text = stringResource(R.string.login),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -215,7 +217,7 @@ fun LoginScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Don't have an account? ",
+                    text = stringResource(R.string.don_t_have_an_account),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 TextButton(
@@ -223,7 +225,7 @@ fun LoginScreen(
                     enabled = !isLoading
                 ) {
                     Text(
-                        text = "Register",
+                        text = stringResource(R.string.register),
                         fontWeight = FontWeight.Bold
                     )
                 }

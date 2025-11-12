@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.Gender
 import com.tumme.scrudstudents.data.local.model.StudentEntity
 
@@ -70,7 +72,9 @@ fun StudentFormScreen(
      * fillMaxSize(): Takes all available screen space
      * padding(16.dp): Adds margin around the form
      */
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
 
         /**
          * LAST NAME FIELD
@@ -85,7 +89,7 @@ fun StudentFormScreen(
         TextField(
             value = lastName,
             onValueChange = { lastName = it },
-            label = { Text("Last Name") }
+            label = { Text(stringResource(R.string.last_name)) }
         )
 
         Spacer(Modifier.height(8.dp))
@@ -97,7 +101,7 @@ fun StudentFormScreen(
         TextField(
             value = firstName,
             onValueChange = { firstName = it },
-            label = { Text("First Name") }
+            label = { Text(stringResource(R.string.first_name)) }
         )
 
         Spacer(Modifier.height(8.dp))
@@ -111,7 +115,7 @@ fun StudentFormScreen(
         TextField(
             value = dobText,
             onValueChange = { dobText = it },
-            label = { Text("Date of birth (yyyy-MM-dd)") }
+            label = { Text(stringResource(R.string.date_of_birth_yyyy_mm_dd)) }
         )
 
         Spacer(Modifier.height(8.dp))
@@ -183,7 +187,7 @@ fun StudentFormScreen(
 
             onSaved()
         }) {
-            Text("Save")
+            Text(stringResource(R.string.save))
         }
     }
 }

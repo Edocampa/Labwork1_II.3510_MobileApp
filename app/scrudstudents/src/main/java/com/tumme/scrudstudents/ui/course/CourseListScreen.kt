@@ -11,9 +11,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tumme.scrudstudents.data.local.model.CourseEntity
+import com.tumme.scrudstudents.R
 
 /**
  * COURSE LIST SCREEN - Displays all courses in a scrollable list
@@ -80,14 +82,14 @@ fun CourseListScreen(
              *
              */
             TopAppBar(
-                title = { Text("Courses") },
+                title = { Text(text = stringResource(id = R.string.courses)) },
                 actions = {
                     TextButton(onClick = onNavigateToStudents) {
-                        Text("STUDENTS")
+                        Text(text = stringResource(id = R.string.students))
                     }
 
                     TextButton(onClick = onNavigateToSubscribes) {
-                        Text("SUBSCRIBES")
+                        Text(stringResource(R.string.subscribes))
                     }
                 }
             )
@@ -234,7 +236,11 @@ fun CourseItem(
                  *
                  */
                 Text(
-                    text = "${course.ectsCourse} ECTS - ${course.levelCourse}",
+                    text = stringResource(
+                        R.string.courses_ects_level,
+                        course.ectsCourse,
+                        course.levelCourse
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

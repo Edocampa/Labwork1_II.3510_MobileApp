@@ -11,9 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.SubscribeWithCourseAndTeacher
 import com.tumme.scrudstudents.ui.viewmodel.StudentFinalGradeViewModel
 import kotlin.math.roundToInt
@@ -64,7 +66,7 @@ fun StudentFinalGradeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Final Grade") },
+                title = { Text(stringResource(R.string.final_grade)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -101,13 +103,13 @@ fun StudentFinalGradeScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No grades yet",
+                    text = stringResource(R.string.no_grades_yet),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Complete courses and get graded to see your final grade",
+                    text = stringResource(R.string.complete_courses_and_get_graded_to_see_your_final_grade),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -133,7 +135,7 @@ fun StudentFinalGradeScreen(
                 // Breakdown Header
                 item {
                     Text(
-                        text = "Grade Breakdown",
+                        text = stringResource(R.string.grade_breakdown),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 8.dp)
@@ -215,7 +217,7 @@ private fun FinalGradeCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Your Final Grade",
+                text = stringResource(R.string.your_final_grade),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -237,7 +239,7 @@ private fun FinalGradeCard(
             )
 
             Text(
-                text = "/20",
+                text = stringResource(R.string._20),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -261,7 +263,7 @@ private fun FinalGradeCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Total: $totalECTS ECTS",
+                    text = stringResource(R.string.total_ects, totalECTS),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -275,12 +277,12 @@ private fun FinalGradeCard(
                 label = {
                     Text(
                         text = when {
-                            finalGrade >= 18 -> "Excellent! "
-                            finalGrade >= 16 -> "Very Good! "
-                            finalGrade >= 14 -> "Good! "
-                            finalGrade >= 12 -> "Fair "
-                            finalGrade >= 10 -> "Passing "
-                            else -> "Keep Going! "
+                            finalGrade >= 18 -> stringResource(R.string.excellent)
+                            finalGrade >= 16 -> stringResource(R.string.very_good)
+                            finalGrade >= 14 -> stringResource(R.string.good)
+                            finalGrade >= 12 -> stringResource(R.string.fair)
+                            finalGrade >= 10 -> stringResource(R.string.passing)
+                            else -> stringResource(R.string.keep_going)
                         },
                         fontWeight = FontWeight.Bold
                     )
@@ -326,7 +328,11 @@ private fun CourseBreakdownCard(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "${teacher.firstName} ${teacher.lastName}",
+                        text = stringResource(
+                            R.string.first_name_last_name,
+                            teacher.firstName,
+                            teacher.lastName
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -337,7 +343,7 @@ private fun CourseBreakdownCard(
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(
-                        text = "${score.toInt()}/20",
+                        text = stringResource(R.string.score_out_of_20, score.toInt()),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -357,7 +363,7 @@ private fun CourseBreakdownCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "$ects ECTS",
+                    text = stringResource(id = R.string.ects),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

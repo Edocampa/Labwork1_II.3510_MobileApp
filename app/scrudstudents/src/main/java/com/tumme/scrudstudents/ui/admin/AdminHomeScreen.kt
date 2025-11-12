@@ -9,12 +9,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.tumme.scrudstudents.R
 import com.tumme.scrudstudents.data.local.model.User
 import com.tumme.scrudstudents.data.local.model.UserRole
 import com.tumme.scrudstudents.ui.viewmodel.AdminViewModel
+
 
 /**
  * AdminHomeScreen - Admin dashboard
@@ -53,7 +56,7 @@ fun AdminHomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Admin Dashboard") },
+                title = { Text(stringResource(R.string.admin_dashboard)) },
                 actions = {
                     IconButton(onClick = onLogout) {
                         Icon(Icons.Default.Logout, "Logout")
@@ -91,12 +94,12 @@ fun AdminHomeScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Administrator",
+                            text = stringResource(R.string.administrator),
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "System Management",
+                            text = stringResource(R.string.system_management),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -106,7 +109,7 @@ fun AdminHomeScreen(
             // Statistics section
             item {
                 Text(
-                    text = "Statistics",
+                    text = stringResource(R.string.statistics),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -118,13 +121,13 @@ fun AdminHomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     StatCard(
-                        title = "Students",
+                        title = stringResource(R.string.students),
                         value = statistics.totalStudents.toString(),
                         icon = Icons.Default.School,
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        title = "Teachers",
+                        title = stringResource(R.string.teachers),
                         value = statistics.totalTeachers.toString(),
                         icon = Icons.Default.Person,
                         modifier = Modifier.weight(1f)
@@ -138,13 +141,13 @@ fun AdminHomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     StatCard(
-                        title = "Courses",
+                        title = stringResource(R.string.courses),
                         value = statistics.totalCourses.toString(),
                         icon = Icons.Default.MenuBook,
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        title = "Subscriptions",
+                        title = stringResource(R.string.subscriptions),
                         value = statistics.totalEnrollments.toString(),
                         icon = Icons.Default.Group,
                         modifier = Modifier.weight(1f)
@@ -155,7 +158,7 @@ fun AdminHomeScreen(
             // User Management
             item {
                 Text(
-                    text = "User Management",
+                    text = stringResource(R.string.user_management),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -277,7 +280,7 @@ private fun UserCard(
                     )
                     if (user.level != null) {
                         Text(
-                            text = " • ${user.level}",
+                            text = stringResource(R.string.user_level, user.level),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -309,9 +312,13 @@ private fun UserCard(
                     tint = MaterialTheme.colorScheme.error
                 )
             },
-            title = { Text("Delete User?") },
+            title = { Text(stringResource(R.string.delete_user)) },
             text = {
-                Text("Are you sure you want to delete ${user.email}? This action cannot be undone and will delete all associated data.")
+                Text(
+                    stringResource(
+                        R.string.are_you_sure_you_want_to_delete_this_action_cannot_be_undone_and_will_delete_all_associated_data,
+                        user.email
+                    ))
             },
             confirmButton = {
                 Button(
@@ -323,12 +330,12 @@ private fun UserCard(
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
